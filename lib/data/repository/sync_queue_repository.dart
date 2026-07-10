@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:drift/drift.dart';
-import '../../domain/sync_entity.dart';
-import '../../domain/sync_queue_record.dart';
-import '../drift/app_database.dart' as drift_db;
-import '../mapper/sync_queue_mapper.dart';
+import 'package:cloud_financial_x/domain/sync_entity.dart';
+import 'package:cloud_financial_x/domain/sync_queue_record.dart';
+import 'package:cloud_financial_x/data/drift/app_database.dart' as drift_db;
+import 'package:cloud_financial_x/data/mapper/sync_queue_mapper.dart';
 
 /// Repository for managing sync_queue records.
 ///

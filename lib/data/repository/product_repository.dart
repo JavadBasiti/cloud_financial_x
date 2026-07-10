@@ -2,10 +2,10 @@
 
 import 'package:cloud_financial_x/domain/sync_queue_record.dart';
 import 'package:drift/drift.dart';
-import '../../ui/common/form_mod.dart';
-import '../drift/app_database.dart' as drift_db;
-import '../../domain/product.dart';
-import '../mapper/product_mapper.dart';
+import 'package:cloud_financial_x/ui/common/form_mod.dart';
+import 'package:cloud_financial_x/data/drift/app_database.dart' as drift_db;
+import 'package:cloud_financial_x/domain/product.dart';
+import 'package:cloud_financial_x/data/mapper/product_mapper.dart';
 import 'sync_queue_repository.dart';
 
 /// Repository for managing Product entities.

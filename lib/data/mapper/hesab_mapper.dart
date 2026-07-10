@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
-import '../../domain/hesab.dart';
-import '../drift/app_database.dart' as drift_db;
+import 'package:cloud_financial_x/domain/hesab.dart';
+import 'package:cloud_financial_x/data/drift/app_database.dart' as drift_db;
 
 /// Mapper برای تبدیل بین لایه Data و Domain برای Hesab
 class HesabMapper {

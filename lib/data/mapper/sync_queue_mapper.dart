@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
-import '../../domain/sync_queue_record.dart';
-import '../drift/app_database.dart' as drift_db;
+import 'package:cloud_financial_x/domain/sync_queue_record.dart';
+import 'package:cloud_financial_x/data/drift/app_database.dart' as drift_db;
 
 /// Mapper between domain SyncQueueRecord and Drift database models.
 class SyncQueueMapper {

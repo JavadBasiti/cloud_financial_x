@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
-import '../../domain/enums/account_level.dart';
-import '../../domain/hesab.dart';
-import '../form/form_field.dart';
-import '../form/validator.dart';
+import 'package:cloud_financial_x/domain/enums/account_level.dart';
+import 'package:cloud_financial_x/domain/hesab.dart';
+import 'package:cloud_financial_x/ui/form/form_field.dart';
+import 'package:cloud_financial_x/ui/form/validator.dart';
 import 'package:uuid/uuid.dart';
 
 /// کنترلر فرم برای مدیریت سرفصل (Hesab)

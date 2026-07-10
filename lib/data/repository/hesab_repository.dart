@@ -1,9 +1,9 @@
 import 'package:cloud_financial_x/domain/sync_queue_record.dart';
 import 'package:drift/drift.dart';
-import '../../domain/hesab.dart';
-import '../../ui/common/form_mod.dart';
-import '../drift/app_database.dart' as drift_db;
-import '../mapper/hesab_mapper.dart';
+import 'package:cloud_financial_x/domain/hesab.dart';
+import 'package:cloud_financial_x/ui/common/form_mod.dart';
+import 'package:cloud_financial_x/data/drift/app_database.dart' as drift_db;
+import 'package:cloud_financial_x/data/mapper/hesab_mapper.dart';
 import 'sync_queue_repository.dart';
 
 /// Repository برای مدیریت Hesab (سرفصلهای حسابداری)
@@ -61,7 +61,7 @@ class HesabRepository {
     await db.transaction(() async {
       if (mode == FormMode.create) {
         await db.into(db.hesabs).insert(HesabMapper.toInsert(hesab));
-        await syncQueueRepo.enqueue(hesab, SyncOperation.insert);
+        await syncQueueRepo.enqueue( hesab, SyncOperation.insert);
       } else {
         await (db.update(db.hesabs)
           ..where((t) => t.id.equals(hesab.id)))

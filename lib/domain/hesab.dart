@@ -1,3 +1,4 @@
+// import '../domain/sync_entity.dart';
 import 'package:cloud_financial_x/domain/sync_entity.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 

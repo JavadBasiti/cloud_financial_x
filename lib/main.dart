@@ -7,7 +7,7 @@ import 'ui/product/product_form_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'data/drift/app_database.dart' as drift_db;
+import 'package:cloud_financial_x/data/drift/app_database.dart' as drift_db;
 import 'data/repository/product_repository.dart';
 import 'data/repository/sync_queue_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart' hide Provider, ChangeNotifierProvider;
