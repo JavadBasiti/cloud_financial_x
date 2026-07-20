@@ -1,0 +1,59 @@
+[Product]
+    - name: String
+    - price: double
+    - category: CostCenter
+
+[ProductController]
+    - manages: Product
+    - calls: productRepository
+
+[Hesab]
+    - accountLevel: AccountLevel
+    - costCenterType: CostCenterType
+    - structure: List<Product>
+
+[HesabController]
+    - manages: Hesab
+    - calls: hesabRepository, journalRepository
+
+[JournalRow]
+    - description: String
+    - amount: double
+    - linkedToProduct: Product?
+
+[JournalRowController]
+    - manages: JournalRow
+    - calls: journalRowRepository
+
+[SyncQueueRecord]
+    - entity: SyncEntity
+    - status: Status
+    - createdAt: DateTime
+
+[SyncService]
+    - resolves: ConflictResolutionService
+    - uses: syncQueueRepository, mapper
+
+[ProductRepository]
+    - fetches: Product
+    - saves: to database via productTable
+
+[JournalRepository]
+    - manages: Journal
+    - uses: journalTable
+
+[CostCenter]
+    - type: CostCenterType
+    - hasSubAccounts: List<Hesab>
+
+[AccountLevel]
+    - level: int (1-5)
+    - hierarchy: String
+
+[Mapper]
+    - maps: SyncEntity → SyncQueueRecord
+    - maps: Product → productTable
+
+[AppDatabase]
+    - contains tables:
+        - product_table, journal_table, hesab_table, cost_center_table, sync_queue_table
