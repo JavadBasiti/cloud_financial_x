@@ -4,6 +4,7 @@ import '../../domain/journal.dart';
 import '../../ui/common/form_mod.dart';
 import '../drift/app_database.dart' as drift_db;
 import '../mapper/journal_mapper.dart';
+import '../../domain/services/journal_service.dart';
 import 'sync_queue_repository.dart';
 
 /// Repository برای مدیریت Journal (اسناد حسابداری)
@@ -21,7 +22,7 @@ import 'sync_queue_repository.dart';
 /// 3. ماندگاری تغییر entity
 /// 4. صف‌بندی sync_queue مربوطه
 /// 5. Commit یا rollback اتمی
-class JournalRepository {
+class JournalRepository implements JournalRepositoryContract {
   final drift_db.AppDatabase db;
   final SyncQueueRepository syncQueueRepo;
 

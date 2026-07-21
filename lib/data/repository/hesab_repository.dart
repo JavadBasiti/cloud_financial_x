@@ -4,6 +4,7 @@ import 'package:cloud_financial_x/domain/hesab.dart';
 import 'package:cloud_financial_x/ui/common/form_mod.dart';
 import 'package:cloud_financial_x/data/drift/app_database.dart' as drift_db;
 import 'package:cloud_financial_x/data/mapper/hesab_mapper.dart';
+import 'package:cloud_financial_x/domain/services/hesab_service.dart';
 import 'sync_queue_repository.dart';
 
 /// Repository برای مدیریت Hesab (سرفصلهای حسابداری)
@@ -21,7 +22,7 @@ import 'sync_queue_repository.dart';
 /// 3. ماندگاری تغییر entity
 /// 4. صف‌بندی sync_queue مربوطه
 /// 5. Commit یا rollback اتمی
-class HesabRepository {
+class HesabRepository implements HesabRepositoryContract {
   final drift_db.AppDatabase db;
   final SyncQueueRepository syncQueueRepo;
 

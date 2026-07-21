@@ -3,8 +3,8 @@ import 'package:cloud_financial_x/ui/product/product_form_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../data/repository/product_repository.dart';
 import '../../domain/product.dart';
+import '../../domain/services/product_service.dart';
 
 class ProductsPage extends StatefulWidget {
   const ProductsPage({super.key});
@@ -85,7 +85,7 @@ class _ProductsPageState extends State<ProductsPage> {
                 onPressed: () async {
                   try {
                     final product = form.buildProduct(now: DateTime.now());
-                    await dialogContext.read<ProductRepository>().save(product, formMode);
+                    await dialogContext.read<ProductService>().saveProduct(product, formMode, now: DateTime.now());
                     // print("saved product:\n$product");
                     // بستن دیالوگ
                     Navigator.pop(dialogContext);
@@ -124,7 +124,7 @@ class _ProductsPageState extends State<ProductsPage> {
         child: const Icon(Icons.add),
       ),
       body: StreamBuilder<List<Product>>(
-        stream: context.read<ProductRepository>().watchAll(),
+        stream: context.read<ProductService>().watchProducts(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -177,7 +177,7 @@ class _ProductsPageState extends State<ProductsPage> {
                           );
 
                           if (confirmed == true) {
-                            await context.read<ProductRepository>().softDelete(product);
+                            await context.read<ProductService>().deleteProduct(product, now: DateTime.now());
                             _loadProducts();
                           }
                         },

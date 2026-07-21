@@ -10,6 +10,8 @@ import 'package:provider/provider.dart';
 import 'package:cloud_financial_x/data/drift/app_database.dart' as drift_db;
 import 'data/repository/product_repository.dart';
 import 'data/repository/sync_queue_repository.dart';
+import 'domain/services/product_service.dart';
+import 'domain/services/hesab_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart' hide Provider, ChangeNotifierProvider;
 import 'package:go_router/go_router.dart';
 import 'screens/dashboard_screen.dart';
@@ -39,6 +41,8 @@ Future<void> main() async {
   final syncQueueRepo = SyncQueueRepository(db);
   final productRepo = ProductRepository(db, syncQueueRepo: syncQueueRepo);
   final hesabRepo = HesabRepository(db, syncQueueRepo: syncQueueRepo);
+  final productService = ProductService(productRepo);
+  final hesabService = HesabService(hesabRepo);
 
   runApp(
     MultiProvider(
@@ -47,6 +51,8 @@ Future<void> main() async {
         Provider.value(value: syncQueueRepo),
         Provider.value(value: productRepo),
         Provider.value(value: hesabRepo),
+        Provider.value(value: productService),
+        Provider.value(value: hesabService),
         ChangeNotifierProvider(create: (c) => ProductFormController(),),
         ChangeNotifierProvider(create: (c) => HesabFormController(),),
             // c.read<ProductRepository>(),

@@ -4,6 +4,7 @@ import '../../domain/cost_center.dart';
 import '../../ui/common/form_mod.dart';
 import '../drift/app_database.dart' as drift_db;
 import '../mapper/cost_center_mapper.dart';
+import '../../domain/services/cost_center_service.dart';
 import 'sync_queue_repository.dart';
 
 /// Repository برای مدیریت CostCenter (مراکز هزینه)
@@ -21,7 +22,7 @@ import 'sync_queue_repository.dart';
 /// 3. ماندگاری تغییر entity
 /// 4. صف‌بندی sync_queue مربوطه
 /// 5. Commit یا rollback اتمی
-class CostCenterRepository {
+class CostCenterRepository implements CostCenterRepositoryContract {
   final drift_db.AppDatabase db;
   final SyncQueueRepository syncQueueRepo;
 

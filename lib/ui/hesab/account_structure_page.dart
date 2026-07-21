@@ -1,5 +1,5 @@
-import 'package:cloud_financial_x/data/repository/hesab_repository.dart';
 import 'package:cloud_financial_x/domain/hesab.dart';
+import 'package:cloud_financial_x/domain/services/hesab_service.dart';
 import 'package:cloud_financial_x/ui/hesab/hesab_form_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -796,8 +796,8 @@ class _AccountStructurePageState extends State<AccountStructurePage> {
               builder: (context, form, _) => TextButton(
                 onPressed: () async {
                   try {
-                    final product = form.buildHesab( now: DateTime.now());
-                    await dialogContext.read<HesabRepository>().save(product, formMode);
+                    final hesab = form.buildHesab( now: DateTime.now());
+                    await dialogContext.read<HesabService>().saveHesab(hesab, formMode, now: DateTime.now());
                     // print("saved product:\n$product");
                     // بستن دیالوگ
                     Navigator.pop(dialogContext);

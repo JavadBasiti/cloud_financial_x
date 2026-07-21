@@ -6,6 +6,7 @@ import 'package:cloud_financial_x/ui/common/form_mod.dart';
 import 'package:cloud_financial_x/data/drift/app_database.dart' as drift_db;
 import 'package:cloud_financial_x/domain/product.dart';
 import 'package:cloud_financial_x/data/mapper/product_mapper.dart';
+import 'package:cloud_financial_x/domain/services/product_service.dart';
 import 'sync_queue_repository.dart';
 
 /// Repository for managing Product entities.
@@ -25,7 +26,7 @@ import 'sync_queue_repository.dart';
 /// 5. Commit or rollback atomically
 ///
 /// This ensures: If entity write fails → no sync enqueue. If enqueue fails → entity write rolls back.
-class ProductRepository {
+class ProductRepository implements ProductRepositoryContract {
   final drift_db.AppDatabase db;
   final SyncQueueRepository syncQueueRepo;
 
