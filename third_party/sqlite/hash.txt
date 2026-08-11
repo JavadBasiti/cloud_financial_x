@@ -1,0 +1,7 @@
+SHA256 hash of third_party\sqlite\sqlite-autoconf-3510100.tar.gz:
+4f2445cd70479724d32ad015ec7fd37fbb6f6130013bd4bfbc80c32beb42b7e0
+CertUtil: -hashfile command completed successfully.
+
+Algorithm       Hash                                                                   Path
+---------       ----                                                                   ----
+SHA256          4F2445CD70479724D32AD015EC7FD37FBB6F6130013BD4BFBC80C32BEB42B7E0       C:\chortke-Cloud\data\cloud_financial_x\third_party\sqlite\sqlite-autoconf-351010...

@@ -46,6 +46,14 @@ class JournalRowFormController extends ChangeNotifier {
         value: _journalRow?.prBest ?? 0.0,
         validators: [Validators.nonNegative()],
       ),
+      'prBed': FormField<double>(
+        value: _journalRow?.prBed ?? 0.0,
+        validators: [Validators.nonNegative()],
+      ),
+      'media': FormField<String>(
+        value: _journalRow?.media ?? '',
+        validators: [],
+      ),
       'descRow': FormField<String>(
         value: _journalRow?.descRow ?? '',
         validators: [],
@@ -79,6 +87,8 @@ class JournalRowFormController extends ChangeNotifier {
   FormField<int> get rowF => getField<int>('rowF');
   FormField<String> get hesabId => getField<String>('hesabId');
   FormField<double> get prBest => getField<double>('prBest');
+  FormField<double> get prBed => getField<double>('prBed');
+  FormField<String> get media => getField<String>('media');
   FormField<String> get descRow => getField<String>('descRow');
   FormField<String> get currencyCode => getField<String>('currencyCode');
   FormField<String> get costCenterId => getField<String>('costCenterId');
@@ -104,15 +114,17 @@ class JournalRowFormController extends ChangeNotifier {
       rowF: getField<int>('rowF').value,
       hesabId: getField<String>('hesabId').value.trim(),
       prBest: getField<double>('prBest').value,
+      prBed: getField<double>('prBed').value,
+      media: getField<String>('media').value.trim(),
       descRow: getField<String>('descRow').value.trim(),
       currencyCode: getField<String>('currencyCode').value,
-      costCenterId: getField<String>('costCenterId').value.trim(),
       isAuto: getField<bool>('isAuto').value,
       journalId: getField<String>('journalId').value.trim(),
       createdAt: _journalRow?.createdAt ?? DateTime.now().millisecondsSinceEpoch,
       updatedAt: DateTime.now().millisecondsSinceEpoch,
       version: (_journalRow?.version ?? 0) + 1,
       isDeleted: false,
+      costCenterId: '',
     );
   }
 

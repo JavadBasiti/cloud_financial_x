@@ -32,8 +32,14 @@ mixin _$JournalRow {
   /// شناسه سرفصل (Hesab ID)
   String get hesabId => throw _privateConstructorUsedError;
 
-  /// مبلغ ردیف
+  /// مبلغ بستانکار ردیف
   double get prBest => throw _privateConstructorUsedError;
+
+  /// مبلغ بدهکار ردیف
+  double get prBed => throw _privateConstructorUsedError;
+
+  /// لینک مدیا (عکس، صوت، فایل مستند)
+  String get media => throw _privateConstructorUsedError;
 
   /// توضیحات ردیف
   String get descRow => throw _privateConstructorUsedError;
@@ -86,6 +92,8 @@ abstract class $JournalRowCopyWith<$Res> {
     int rowF,
     String hesabId,
     double prBest,
+    double prBed,
+    String media,
     String descRow,
     String currencyCode,
     String costCenterId,
@@ -120,6 +128,8 @@ class _$JournalRowCopyWithImpl<$Res, $Val extends JournalRow>
     Object? rowF = null,
     Object? hesabId = null,
     Object? prBest = null,
+    Object? prBed = null,
+    Object? media = null,
     Object? descRow = null,
     Object? currencyCode = null,
     Object? costCenterId = null,
@@ -157,6 +167,14 @@ class _$JournalRowCopyWithImpl<$Res, $Val extends JournalRow>
                 ? _value.prBest
                 : prBest // ignore: cast_nullable_to_non_nullable
                       as double,
+            prBed: null == prBed
+                ? _value.prBed
+                : prBed // ignore: cast_nullable_to_non_nullable
+                      as double,
+            media: null == media
+                ? _value.media
+                : media // ignore: cast_nullable_to_non_nullable
+                      as String,
             descRow: null == descRow
                 ? _value.descRow
                 : descRow // ignore: cast_nullable_to_non_nullable
@@ -219,6 +237,8 @@ abstract class _$$JournalRowImplCopyWith<$Res>
     int rowF,
     String hesabId,
     double prBest,
+    double prBed,
+    String media,
     String descRow,
     String currencyCode,
     String costCenterId,
@@ -252,6 +272,8 @@ class __$$JournalRowImplCopyWithImpl<$Res>
     Object? rowF = null,
     Object? hesabId = null,
     Object? prBest = null,
+    Object? prBed = null,
+    Object? media = null,
     Object? descRow = null,
     Object? currencyCode = null,
     Object? costCenterId = null,
@@ -289,6 +311,14 @@ class __$$JournalRowImplCopyWithImpl<$Res>
             ? _value.prBest
             : prBest // ignore: cast_nullable_to_non_nullable
                   as double,
+        prBed: null == prBed
+            ? _value.prBed
+            : prBed // ignore: cast_nullable_to_non_nullable
+                  as double,
+        media: null == media
+            ? _value.media
+            : media // ignore: cast_nullable_to_non_nullable
+                  as String,
         descRow: null == descRow
             ? _value.descRow
             : descRow // ignore: cast_nullable_to_non_nullable
@@ -344,6 +374,8 @@ class _$JournalRowImpl extends _JournalRow {
     required this.rowF,
     required this.hesabId,
     this.prBest = 0,
+    this.prBed = 0,
+    this.media = '',
     this.descRow = '',
     this.currencyCode = 'IRR',
     required this.costCenterId,
@@ -376,10 +408,20 @@ class _$JournalRowImpl extends _JournalRow {
   @override
   final String hesabId;
 
-  /// مبلغ ردیف
+  /// مبلغ بستانکار ردیف
   @override
   @JsonKey()
   final double prBest;
+
+  /// مبلغ بدهکار ردیف
+  @override
+  @JsonKey()
+  final double prBed;
+
+  /// لینک مدیا (عکس، صوت، فایل مستند)
+  @override
+  @JsonKey()
+  final String media;
 
   /// توضیحات ردیف
   @override
@@ -426,7 +468,7 @@ class _$JournalRowImpl extends _JournalRow {
 
   @override
   String toString() {
-    return 'JournalRow(id: $id, date: $date, noSnd: $noSnd, rowF: $rowF, hesabId: $hesabId, prBest: $prBest, descRow: $descRow, currencyCode: $currencyCode, costCenterId: $costCenterId, isAuto: $isAuto, journalId: $journalId, createdAt: $createdAt, updatedAt: $updatedAt, version: $version, isDeleted: $isDeleted, deletedAt: $deletedAt)';
+    return 'JournalRow(id: $id, date: $date, noSnd: $noSnd, rowF: $rowF, hesabId: $hesabId, prBest: $prBest, prBed: $prBed, media: $media, descRow: $descRow, currencyCode: $currencyCode, costCenterId: $costCenterId, isAuto: $isAuto, journalId: $journalId, createdAt: $createdAt, updatedAt: $updatedAt, version: $version, isDeleted: $isDeleted, deletedAt: $deletedAt)';
   }
 
   @override
@@ -440,6 +482,8 @@ class _$JournalRowImpl extends _JournalRow {
             (identical(other.rowF, rowF) || other.rowF == rowF) &&
             (identical(other.hesabId, hesabId) || other.hesabId == hesabId) &&
             (identical(other.prBest, prBest) || other.prBest == prBest) &&
+            (identical(other.prBed, prBed) || other.prBed == prBed) &&
+            (identical(other.media, media) || other.media == media) &&
             (identical(other.descRow, descRow) || other.descRow == descRow) &&
             (identical(other.currencyCode, currencyCode) ||
                 other.currencyCode == currencyCode) &&
@@ -468,6 +512,8 @@ class _$JournalRowImpl extends _JournalRow {
     rowF,
     hesabId,
     prBest,
+    prBed,
+    media,
     descRow,
     currencyCode,
     costCenterId,
@@ -497,6 +543,8 @@ abstract class _JournalRow extends JournalRow {
     required final int rowF,
     required final String hesabId,
     final double prBest,
+    final double prBed,
+    final String media,
     final String descRow,
     final String currencyCode,
     required final String costCenterId,
@@ -530,9 +578,17 @@ abstract class _JournalRow extends JournalRow {
   @override
   String get hesabId;
 
-  /// مبلغ ردیف
+  /// مبلغ بستانکار ردیف
   @override
   double get prBest;
+
+  /// مبلغ بدهکار ردیف
+  @override
+  double get prBed;
+
+  /// لینک مدیا (عکس، صوت، فایل مستند)
+  @override
+  String get media;
 
   /// توضیحات ردیف
   @override

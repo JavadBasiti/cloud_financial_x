@@ -41,8 +41,7 @@ Contains Drift table definitions and database setup:
 Coordinates between data persistence and domain logic, ensuring every change is tracked for sync:
 - ProductRepository
 - HesabRepository
-- JournalRepository
-- JournalRowRepository
+- JournalRepository (includes JournalRow behavior)
 - CostCenterRepository
 - SyncQueueRepository
 

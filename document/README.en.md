@@ -53,8 +53,7 @@ This layer coordinates read/write operations and manages the sync flow.
 Examples:
 - ProductRepository
 - HesabRepository
-- JournalRepository
-- JournalRowRepository
+- JournalRepository (includes JournalRow behavior)
 - CostCenterRepository
 - SyncQueueRepository
 

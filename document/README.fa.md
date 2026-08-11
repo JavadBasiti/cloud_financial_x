@@ -53,8 +53,7 @@ graph TD
 نمونه‌ها:
 - ProductRepository
 - HesabRepository
-- JournalRepository
-- JournalRowRepository
+- JournalRepository (شامل رفتار JournalRow)
 - CostCenterRepository
 - SyncQueueRepository
 

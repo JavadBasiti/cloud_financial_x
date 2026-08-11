@@ -10,6 +10,7 @@ import 'package:drift/drift.dart';
 @TableIndex(name: 'date_inx', columns: {#date})
 @TableIndex(name: 'noSnd_inx', columns: {#noSnd})
 @TableIndex(name: 'prBest_inx', columns: {#prBest})
+@TableIndex(name: 'prBed_inx', columns: {#prBed})
 class JournalRows extends Table {
   //UUID
   TextColumn get id => text().withLength(min: 36, max: 36)();
@@ -21,8 +22,12 @@ class JournalRows extends Table {
   IntColumn get rowF => integer()();
   //کد حساب
   TextColumn get hesabId => text().references(Hesabs, #id)();
-  //مبلغ ردیف
+  //مبلغ بستانکار
   RealColumn get prBest => real().withDefault(const Constant(0))();
+  //مبلغ بدهکار
+  RealColumn get prBed => real().withDefault(const Constant(0))();
+  //لینک مدیا (عکس، صوت، فایل مستند)
+  TextColumn get media => text().withDefault(const Constant(''))();
   //توضیحات ردیف
   TextColumn get descRow => text().withLength(min: 0, max: 255)();
   // ارز مورد کاربرد

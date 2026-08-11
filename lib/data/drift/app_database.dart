@@ -21,7 +21,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_open());
 
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 6;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -45,6 +45,12 @@ class AppDatabase extends _$AppDatabase {
 
           // Migration to add hesab, journal, journal_row, cost_center tables
           if (from < 5) {
+          }
+
+          // Migration to add prBed and media columns to journal_rows
+          if (from < 6) {
+            await m.addColumn(journalRows, journalRows.prBed);
+            await m.addColumn(journalRows, journalRows.media);
           }
         },
       );

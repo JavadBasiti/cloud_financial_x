@@ -41,8 +41,7 @@
 مسئولیت اتصال بین داده و دامنه را دارد و اطمینان حاصل می‌کند که هر تغییر داده‌ای در Sync Queue نیز ثبت شود:
 - ProductRepository
 - HesabRepository
-- JournalRepository
-- JournalRowRepository
+- JournalRepository (شامل رفتار JournalRow)
 - CostCenterRepository
 - SyncQueueRepository
 

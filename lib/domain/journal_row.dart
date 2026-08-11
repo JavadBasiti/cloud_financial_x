@@ -25,10 +25,18 @@ class JournalRow with _$JournalRow implements SyncEntity {
     /// شناسه سرفصل (Hesab ID)
     required String hesabId,
     
-    /// مبلغ ردیف
+    /// مبلغ بستانکار ردیف
     @Default(0)
     double prBest,
+
+    /// مبلغ بدهکار ردیف
+    @Default(0)
+    double prBed,
     
+    /// لینک مدیا (عکس، صوت، فایل مستند)
+    @Default('')
+    String media,
+
     /// توضیحات ردیف
     @Default('')
     String descRow,
@@ -84,6 +92,8 @@ class JournalRow with _$JournalRow implements SyncEntity {
     'costCenterId': costCenterId,
     'isAuto': isAuto,
     'journalId': journalId,
+    'prBed': prBed,
+    'media': media,
     'createdAt': createdAt,
     'updatedAt': updatedAt,
     'version': version,

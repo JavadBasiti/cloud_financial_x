@@ -1,13 +1,15 @@
+import 'package:cloud_financial_x/domain/journal.dart';
+import 'package:cloud_financial_x/domain/journal_row.dart';
 import 'package:cloud_financial_x/domain/sync_queue_record.dart';
 import 'package:drift/drift.dart';
-import '../../domain/journal.dart';
 import '../../ui/common/form_mod.dart';
 import '../drift/app_database.dart' as drift_db;
 import '../mapper/journal_mapper.dart';
+import '../mapper/journal_row_mapper.dart';
 import '../../domain/services/journal_service.dart';
 import 'sync_queue_repository.dart';
 
-/// Repository برای مدیریت Journal (اسناد حسابداری)
+/// Repository برای مدیریت Journal و JournalRow
 ///
 /// مسئولیت‌های معماری:
 /// - هماهنگی تراکنش‌های سطح Repository
@@ -57,7 +59,7 @@ class JournalRepository implements JournalRepositoryContract {
     });
   }
 
-  /// درج (ایجاد) یا به‌روزرسانی در تراکنش
+  /// درج (ایجاد) یا به‌روزرسانی سند در تراکنش
   Future<void> save(Journal journal, FormMode mode) async {
     await db.transaction(() async {
       if (mode == FormMode.create) {
@@ -101,12 +103,93 @@ class JournalRepository implements JournalRepositoryContract {
     });
   }
 
+  /// مشاهدهٔ تمام ردیفهای فعال سند به صورت stream
+  Stream<List<JournalRow>> watchJournalRows() {
+    final query = (db.select(db.journalRows)..where((tbl) => tbl.isDeleted.equals(false)));
+    return query.watch().map((rows) {
+      return rows.map(JournalRowMapper.toDomain).toList();
+    });
+  }
+
+  /// مشاهدهٔ ردیفهای یک سند
+  Stream<List<JournalRow>> watchJournalRowsByJournalId(String journalId) {
+    final query = (db.select(db.journalRows)
+      ..where((tbl) => tbl.journalId.equals(journalId) & tbl.isDeleted.equals(false))
+      ..orderBy([(tbl) => OrderingTerm(expression: tbl.rowF)]));
+    return query.watch().map((rows) {
+      return rows.map(JournalRowMapper.toDomain).toList();
+    });
+  }
+
+  /// مشاهدهٔ ردیفهای یک سند بر اساس شماره سند
+  Stream<List<JournalRow>> watchJournalRowsByNoSnd(int noSnd) {
+    final query = (db.select(db.journalRows)
+      ..where((tbl) => tbl.noSnd.equals(noSnd) & tbl.isDeleted.equals(false))
+      ..orderBy([(tbl) => OrderingTerm(expression: tbl.rowF)]));
+    return query.watch().map((rows) {
+      return rows.map(JournalRowMapper.toDomain).toList();
+    });
+  }
+
+  /// درج (ایجاد) یا به‌روزرسانی ردیف سند در تراکنش
+  Future<void> saveJournalRow(JournalRow journalRow, FormMode mode) async {
+    await db.transaction(() async {
+      if (mode == FormMode.create) {
+        await db.into(db.journalRows).insert(JournalRowMapper.toInsert(journalRow));
+        await syncQueueRepo.enqueue(journalRow, SyncOperation.insert);
+      } else {
+        await (db.update(db.journalRows)
+          ..where((t) => t.id.equals(journalRow.id)))
+            .write(JournalRowMapper.toUpdate(journalRow));
+        await syncQueueRepo.enqueue(journalRow, SyncOperation.update);
+      }
+    });
+  }
+
+  /// حذف نرم ردیف سند با علامت‌گذاری به عنوان حذف‌شده
+  Future<void> deleteJournalRow(JournalRow journalRow) async {
+    final now = DateTime.now().millisecondsSinceEpoch;
+
+    await db.transaction(() async {
+      await (db.update(db.journalRows)
+          ..where((tbl) => tbl.id.equals(journalRow.id)))
+          .write(
+        drift_db.JournalRowsCompanion(
+          isDeleted: const Value(true),
+          deletedAt: Value(now),
+          updatedAt: Value(now),
+          version: Value(journalRow.version + 1),
+        ),
+      );
+
+      await syncQueueRepo.enqueue(journalRow, SyncOperation.delete);
+    });
+  }
+
   /// دسترسی یکبار خواند برای تمام اسناد فعال
   Future<List<Journal>> getAllActive() async {
     final rows = await (db.select(db.journals)
       ..where((tbl) => tbl.isDeleted.equals(false)))
         .get();
     return rows.map(JournalMapper.toDomain).toList();
+  }
+
+  /// دسترسی یکبار خواند برای ردیفهای یک سند
+  Future<List<JournalRow>> getJournalRowsByJournalId(String journalId) async {
+    final rows = await (db.select(db.journalRows)
+      ..where((tbl) => tbl.journalId.equals(journalId) & tbl.isDeleted.equals(false))
+      ..orderBy([(tbl) => OrderingTerm(expression: tbl.rowF)]))
+        .get();
+    return rows.map(JournalRowMapper.toDomain).toList();
+  }
+
+  /// دسترسی یکبار خواند برای ردیفهای یک سند بر اساس شماره سند
+  Future<List<JournalRow>> getJournalRowsByNoSnd(int noSnd) async {
+    final rows = await (db.select(db.journalRows)
+      ..where((tbl) => tbl.noSnd.equals(noSnd) & tbl.isDeleted.equals(false))
+      ..orderBy([(tbl) => OrderingTerm(expression: tbl.rowF)]))
+        .get();
+    return rows.map(JournalRowMapper.toDomain).toList();
   }
 
   /// دسترسی یکبار خواند برای سند بر اساس شماره

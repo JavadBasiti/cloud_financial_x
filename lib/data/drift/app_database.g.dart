@@ -4048,6 +4048,26 @@ class $JournalRowsTable extends JournalRows
     requiredDuringInsert: false,
     defaultValue: const Constant(0),
   );
+  static const VerificationMeta _prBedMeta = const VerificationMeta('prBed');
+  @override
+  late final GeneratedColumn<double> prBed = GeneratedColumn<double>(
+    'pr_bed',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _mediaMeta = const VerificationMeta('media');
+  @override
+  late final GeneratedColumn<String> media = GeneratedColumn<String>(
+    'media',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
   static const VerificationMeta _descRowMeta = const VerificationMeta(
     'descRow',
   );
@@ -4184,6 +4204,8 @@ class $JournalRowsTable extends JournalRows
     rowF,
     hesabId,
     prBest,
+    prBed,
+    media,
     descRow,
     currencyCode,
     constCenterId,
@@ -4248,6 +4270,18 @@ class $JournalRowsTable extends JournalRows
       context.handle(
         _prBestMeta,
         prBest.isAcceptableOrUnknown(data['pr_best']!, _prBestMeta),
+      );
+    }
+    if (data.containsKey('pr_bed')) {
+      context.handle(
+        _prBedMeta,
+        prBed.isAcceptableOrUnknown(data['pr_bed']!, _prBedMeta),
+      );
+    }
+    if (data.containsKey('media')) {
+      context.handle(
+        _mediaMeta,
+        media.isAcceptableOrUnknown(data['media']!, _mediaMeta),
       );
     }
     if (data.containsKey('desc_row')) {
@@ -4357,6 +4391,14 @@ class $JournalRowsTable extends JournalRows
         DriftSqlType.double,
         data['${effectivePrefix}pr_best'],
       )!,
+      prBed: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}pr_bed'],
+      )!,
+      media: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}media'],
+      )!,
       descRow: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}desc_row'],
@@ -4413,6 +4455,8 @@ class JournalRow extends DataClass implements Insertable<JournalRow> {
   final int rowF;
   final String hesabId;
   final double prBest;
+  final double prBed;
+  final String media;
   final String descRow;
   final String currencyCode;
   final String constCenterId;
@@ -4430,6 +4474,8 @@ class JournalRow extends DataClass implements Insertable<JournalRow> {
     required this.rowF,
     required this.hesabId,
     required this.prBest,
+    required this.prBed,
+    required this.media,
     required this.descRow,
     required this.currencyCode,
     required this.constCenterId,
@@ -4450,6 +4496,8 @@ class JournalRow extends DataClass implements Insertable<JournalRow> {
     map['row_f'] = Variable<int>(rowF);
     map['hesab_id'] = Variable<String>(hesabId);
     map['pr_best'] = Variable<double>(prBest);
+    map['pr_bed'] = Variable<double>(prBed);
+    map['media'] = Variable<String>(media);
     map['desc_row'] = Variable<String>(descRow);
     map['currency_code'] = Variable<String>(currencyCode);
     map['const_center_id'] = Variable<String>(constCenterId);
@@ -4475,6 +4523,8 @@ class JournalRow extends DataClass implements Insertable<JournalRow> {
       rowF: Value(rowF),
       hesabId: Value(hesabId),
       prBest: Value(prBest),
+      prBed: Value(prBed),
+      media: Value(media),
       descRow: Value(descRow),
       currencyCode: Value(currencyCode),
       constCenterId: Value(constCenterId),
@@ -4504,6 +4554,8 @@ class JournalRow extends DataClass implements Insertable<JournalRow> {
       rowF: serializer.fromJson<int>(json['rowF']),
       hesabId: serializer.fromJson<String>(json['hesabId']),
       prBest: serializer.fromJson<double>(json['prBest']),
+      prBed: serializer.fromJson<double>(json['prBed']),
+      media: serializer.fromJson<String>(json['media']),
       descRow: serializer.fromJson<String>(json['descRow']),
       currencyCode: serializer.fromJson<String>(json['currencyCode']),
       constCenterId: serializer.fromJson<String>(json['constCenterId']),
@@ -4526,6 +4578,8 @@ class JournalRow extends DataClass implements Insertable<JournalRow> {
       'rowF': serializer.toJson<int>(rowF),
       'hesabId': serializer.toJson<String>(hesabId),
       'prBest': serializer.toJson<double>(prBest),
+      'prBed': serializer.toJson<double>(prBed),
+      'media': serializer.toJson<String>(media),
       'descRow': serializer.toJson<String>(descRow),
       'currencyCode': serializer.toJson<String>(currencyCode),
       'constCenterId': serializer.toJson<String>(constCenterId),
@@ -4546,6 +4600,8 @@ class JournalRow extends DataClass implements Insertable<JournalRow> {
     int? rowF,
     String? hesabId,
     double? prBest,
+    double? prBed,
+    String? media,
     String? descRow,
     String? currencyCode,
     String? constCenterId,
@@ -4563,6 +4619,8 @@ class JournalRow extends DataClass implements Insertable<JournalRow> {
     rowF: rowF ?? this.rowF,
     hesabId: hesabId ?? this.hesabId,
     prBest: prBest ?? this.prBest,
+    prBed: prBed ?? this.prBed,
+    media: media ?? this.media,
     descRow: descRow ?? this.descRow,
     currencyCode: currencyCode ?? this.currencyCode,
     constCenterId: constCenterId ?? this.constCenterId,
@@ -4582,6 +4640,8 @@ class JournalRow extends DataClass implements Insertable<JournalRow> {
       rowF: data.rowF.present ? data.rowF.value : this.rowF,
       hesabId: data.hesabId.present ? data.hesabId.value : this.hesabId,
       prBest: data.prBest.present ? data.prBest.value : this.prBest,
+      prBed: data.prBed.present ? data.prBed.value : this.prBed,
+      media: data.media.present ? data.media.value : this.media,
       descRow: data.descRow.present ? data.descRow.value : this.descRow,
       currencyCode: data.currencyCode.present
           ? data.currencyCode.value
@@ -4608,6 +4668,8 @@ class JournalRow extends DataClass implements Insertable<JournalRow> {
           ..write('rowF: $rowF, ')
           ..write('hesabId: $hesabId, ')
           ..write('prBest: $prBest, ')
+          ..write('prBed: $prBed, ')
+          ..write('media: $media, ')
           ..write('descRow: $descRow, ')
           ..write('currencyCode: $currencyCode, ')
           ..write('constCenterId: $constCenterId, ')
@@ -4630,6 +4692,8 @@ class JournalRow extends DataClass implements Insertable<JournalRow> {
     rowF,
     hesabId,
     prBest,
+    prBed,
+    media,
     descRow,
     currencyCode,
     constCenterId,
@@ -4651,6 +4715,8 @@ class JournalRow extends DataClass implements Insertable<JournalRow> {
           other.rowF == this.rowF &&
           other.hesabId == this.hesabId &&
           other.prBest == this.prBest &&
+          other.prBed == this.prBed &&
+          other.media == this.media &&
           other.descRow == this.descRow &&
           other.currencyCode == this.currencyCode &&
           other.constCenterId == this.constCenterId &&
@@ -4670,6 +4736,8 @@ class JournalRowsCompanion extends UpdateCompanion<JournalRow> {
   final Value<int> rowF;
   final Value<String> hesabId;
   final Value<double> prBest;
+  final Value<double> prBed;
+  final Value<String> media;
   final Value<String> descRow;
   final Value<String> currencyCode;
   final Value<String> constCenterId;
@@ -4688,6 +4756,8 @@ class JournalRowsCompanion extends UpdateCompanion<JournalRow> {
     this.rowF = const Value.absent(),
     this.hesabId = const Value.absent(),
     this.prBest = const Value.absent(),
+    this.prBed = const Value.absent(),
+    this.media = const Value.absent(),
     this.descRow = const Value.absent(),
     this.currencyCode = const Value.absent(),
     this.constCenterId = const Value.absent(),
@@ -4707,6 +4777,8 @@ class JournalRowsCompanion extends UpdateCompanion<JournalRow> {
     required int rowF,
     required String hesabId,
     this.prBest = const Value.absent(),
+    this.prBed = const Value.absent(),
+    this.media = const Value.absent(),
     required String descRow,
     this.currencyCode = const Value.absent(),
     required String constCenterId,
@@ -4734,6 +4806,8 @@ class JournalRowsCompanion extends UpdateCompanion<JournalRow> {
     Expression<int>? rowF,
     Expression<String>? hesabId,
     Expression<double>? prBest,
+    Expression<double>? prBed,
+    Expression<String>? media,
     Expression<String>? descRow,
     Expression<String>? currencyCode,
     Expression<String>? constCenterId,
@@ -4753,6 +4827,8 @@ class JournalRowsCompanion extends UpdateCompanion<JournalRow> {
       if (rowF != null) 'row_f': rowF,
       if (hesabId != null) 'hesab_id': hesabId,
       if (prBest != null) 'pr_best': prBest,
+      if (prBed != null) 'pr_bed': prBed,
+      if (media != null) 'media': media,
       if (descRow != null) 'desc_row': descRow,
       if (currencyCode != null) 'currency_code': currencyCode,
       if (constCenterId != null) 'const_center_id': constCenterId,
@@ -4774,6 +4850,8 @@ class JournalRowsCompanion extends UpdateCompanion<JournalRow> {
     Value<int>? rowF,
     Value<String>? hesabId,
     Value<double>? prBest,
+    Value<double>? prBed,
+    Value<String>? media,
     Value<String>? descRow,
     Value<String>? currencyCode,
     Value<String>? constCenterId,
@@ -4793,6 +4871,8 @@ class JournalRowsCompanion extends UpdateCompanion<JournalRow> {
       rowF: rowF ?? this.rowF,
       hesabId: hesabId ?? this.hesabId,
       prBest: prBest ?? this.prBest,
+      prBed: prBed ?? this.prBed,
+      media: media ?? this.media,
       descRow: descRow ?? this.descRow,
       currencyCode: currencyCode ?? this.currencyCode,
       constCenterId: constCenterId ?? this.constCenterId,
@@ -4827,6 +4907,12 @@ class JournalRowsCompanion extends UpdateCompanion<JournalRow> {
     }
     if (prBest.present) {
       map['pr_best'] = Variable<double>(prBest.value);
+    }
+    if (prBed.present) {
+      map['pr_bed'] = Variable<double>(prBed.value);
+    }
+    if (media.present) {
+      map['media'] = Variable<String>(media.value);
     }
     if (descRow.present) {
       map['desc_row'] = Variable<String>(descRow.value);
@@ -4873,6 +4959,8 @@ class JournalRowsCompanion extends UpdateCompanion<JournalRow> {
           ..write('rowF: $rowF, ')
           ..write('hesabId: $hesabId, ')
           ..write('prBest: $prBest, ')
+          ..write('prBed: $prBed, ')
+          ..write('media: $media, ')
           ..write('descRow: $descRow, ')
           ..write('currencyCode: $currencyCode, ')
           ..write('constCenterId: $constCenterId, ')
@@ -4942,6 +5030,10 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     'prBest_inx',
     'CREATE INDEX prBest_inx ON journal_rows (pr_best)',
   );
+  late final Index prBedInx = Index(
+    'prBed_inx',
+    'CREATE INDEX prBed_inx ON journal_rows (pr_bed)',
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -4964,6 +5056,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     dateInx,
     noSndInx,
     prBestInx,
+    prBedInx,
   ];
 }
 
@@ -7081,6 +7174,8 @@ typedef $$JournalRowsTableCreateCompanionBuilder =
       required int rowF,
       required String hesabId,
       Value<double> prBest,
+      Value<double> prBed,
+      Value<String> media,
       required String descRow,
       Value<String> currencyCode,
       required String constCenterId,
@@ -7101,6 +7196,8 @@ typedef $$JournalRowsTableUpdateCompanionBuilder =
       Value<int> rowF,
       Value<String> hesabId,
       Value<double> prBest,
+      Value<double> prBed,
+      Value<String> media,
       Value<String> descRow,
       Value<String> currencyCode,
       Value<String> constCenterId,
@@ -7206,6 +7303,16 @@ class $$JournalRowsTableFilterComposer
 
   ColumnFilters<double> get prBest => $composableBuilder(
     column: $table.prBest,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get prBed => $composableBuilder(
+    column: $table.prBed,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get media => $composableBuilder(
+    column: $table.media,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -7353,6 +7460,16 @@ class $$JournalRowsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<double> get prBed => $composableBuilder(
+    column: $table.prBed,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get media => $composableBuilder(
+    column: $table.media,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get descRow => $composableBuilder(
     column: $table.descRow,
     builder: (column) => ColumnOrderings(column),
@@ -7486,6 +7603,12 @@ class $$JournalRowsTableAnnotationComposer
 
   GeneratedColumn<double> get prBest =>
       $composableBuilder(column: $table.prBest, builder: (column) => column);
+
+  GeneratedColumn<double> get prBed =>
+      $composableBuilder(column: $table.prBed, builder: (column) => column);
+
+  GeneratedColumn<String> get media =>
+      $composableBuilder(column: $table.media, builder: (column) => column);
 
   GeneratedColumn<String> get descRow =>
       $composableBuilder(column: $table.descRow, builder: (column) => column);
@@ -7621,6 +7744,8 @@ class $$JournalRowsTableTableManager
                 Value<int> rowF = const Value.absent(),
                 Value<String> hesabId = const Value.absent(),
                 Value<double> prBest = const Value.absent(),
+                Value<double> prBed = const Value.absent(),
+                Value<String> media = const Value.absent(),
                 Value<String> descRow = const Value.absent(),
                 Value<String> currencyCode = const Value.absent(),
                 Value<String> constCenterId = const Value.absent(),
@@ -7639,6 +7764,8 @@ class $$JournalRowsTableTableManager
                 rowF: rowF,
                 hesabId: hesabId,
                 prBest: prBest,
+                prBed: prBed,
+                media: media,
                 descRow: descRow,
                 currencyCode: currencyCode,
                 constCenterId: constCenterId,
@@ -7659,6 +7786,8 @@ class $$JournalRowsTableTableManager
                 required int rowF,
                 required String hesabId,
                 Value<double> prBest = const Value.absent(),
+                Value<double> prBed = const Value.absent(),
+                Value<String> media = const Value.absent(),
                 required String descRow,
                 Value<String> currencyCode = const Value.absent(),
                 required String constCenterId,
@@ -7677,6 +7806,8 @@ class $$JournalRowsTableTableManager
                 rowF: rowF,
                 hesabId: hesabId,
                 prBest: prBest,
+                prBed: prBed,
+                media: media,
                 descRow: descRow,
                 currencyCode: currencyCode,
                 constCenterId: constCenterId,
