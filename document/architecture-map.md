@@ -16,9 +16,12 @@
 
 ## Key Folders
 - lib/screens: feature screens
-- lib/ui: reusable UI and forms
+- lib/ui: reusable UI, pages and forms (e.g. lib/ui/journal: journal CRUD page, row dialog, form controllers)
 - lib/widgets: app shell and shared widgets
 - lib/data/repository: business/data access coordination
 - lib/data/drift: database schema and tables
 - lib/data/mapper: domain-to-database mapping
-- lib/domain: core business models and sync abstractions
+- lib/domain: core business models, services and sync abstractions
+
+## Feature Docs
+- document/journal-crud.fa.md / document/journal-crud.en.md: full CRUD flow of the accounting journal
