@@ -34,6 +34,7 @@ class JournalRepository implements JournalRepositoryContract {
   /// مشاهدهٔ تمام اسناد فعال به صورت stream
   /// 
   /// رفتار جریان واکنش‌پذیر که هر زمان پایگاه‌داده تغییر می‌کند، لیستی از اسناد فعال را ارسال می‌کند.
+  @override
   Stream<List<Journal>> watchAll() {
     final query = (db.select(db.journals)..where((tbl) => tbl.isDeleted.equals(false)));
     return query.watch().map((rows) {
@@ -60,6 +61,7 @@ class JournalRepository implements JournalRepositoryContract {
   }
 
   /// درج (ایجاد) یا به‌روزرسانی سند در تراکنش
+  @override
   Future<void> save(Journal journal, FormMode mode) async {
     await db.transaction(() async {
       if (mode == FormMode.create) {
@@ -84,6 +86,7 @@ class JournalRepository implements JournalRepositoryContract {
   /// 5. اتمی commit می‌شود
   ///
   /// سند از پایگاه‌داده حذف نمی‌شود، فقط به عنوان حذف‌شده علامت‌گذاری می‌شود.
+  @override
   Future<void> softDelete(Journal journal) async {
     final now = DateTime.now().millisecondsSinceEpoch;
     
@@ -104,6 +107,7 @@ class JournalRepository implements JournalRepositoryContract {
   }
 
   /// مشاهدهٔ تمام ردیفهای فعال سند به صورت stream
+  @override
   Stream<List<JournalRow>> watchJournalRows() {
     final query = (db.select(db.journalRows)..where((tbl) => tbl.isDeleted.equals(false)));
     return query.watch().map((rows) {
@@ -112,6 +116,7 @@ class JournalRepository implements JournalRepositoryContract {
   }
 
   /// مشاهدهٔ ردیفهای یک سند
+  @override
   Stream<List<JournalRow>> watchJournalRowsByJournalId(String journalId) {
     final query = (db.select(db.journalRows)
       ..where((tbl) => tbl.journalId.equals(journalId) & tbl.isDeleted.equals(false))
@@ -122,6 +127,7 @@ class JournalRepository implements JournalRepositoryContract {
   }
 
   /// مشاهدهٔ ردیفهای یک سند بر اساس شماره سند
+  @override
   Stream<List<JournalRow>> watchJournalRowsByNoSnd(int noSnd) {
     final query = (db.select(db.journalRows)
       ..where((tbl) => tbl.noSnd.equals(noSnd) & tbl.isDeleted.equals(false))
@@ -132,6 +138,7 @@ class JournalRepository implements JournalRepositoryContract {
   }
 
   /// درج (ایجاد) یا به‌روزرسانی ردیف سند در تراکنش
+  @override
   Future<void> saveJournalRow(JournalRow journalRow, FormMode mode) async {
     await db.transaction(() async {
       if (mode == FormMode.create) {
@@ -147,6 +154,7 @@ class JournalRepository implements JournalRepositoryContract {
   }
 
   /// حذف نرم ردیف سند با علامت‌گذاری به عنوان حذف‌شده
+  @override
   Future<void> deleteJournalRow(JournalRow journalRow) async {
     final now = DateTime.now().millisecondsSinceEpoch;
 
@@ -166,6 +174,98 @@ class JournalRepository implements JournalRepositoryContract {
     });
   }
 
+  /// ذخیرهٔ اتمی سند به همراه ردیف‌های آن
+  ///
+  /// تمام تغییرات (سند، ردیف‌های جدید، ردیف‌های ویرایش‌شده و ردیف‌های حذف‌شده)
+  /// در یک تراکنش انجام می‌شوند و برای هر تغییر یک رکورد در sync_queue ثبت می‌شود.
+  /// در صورت خطا کل عملیات rollback می‌شود و سند نیمه‌کاره باقی نمی‌ماند.
+  @override
+  Future<void> saveJournalWithRows({
+    required Journal journal,
+    required FormMode mode,
+    required List<JournalRow> insertedRows,
+    required List<JournalRow> updatedRows,
+    required List<JournalRow> deletedRows,
+  }) async {
+    await db.transaction(() async {
+      if (mode == FormMode.create) {
+        await db.into(db.journals).insert(JournalMapper.toInsert(journal));
+        await syncQueueRepo.enqueue(journal, SyncOperation.insert);
+      } else {
+        await (db.update(db.journals)..where((t) => t.id.equals(journal.id)))
+            .write(JournalMapper.toUpdate(journal));
+        await syncQueueRepo.enqueue(journal, SyncOperation.update);
+      }
+
+      for (final row in insertedRows) {
+        await db.into(db.journalRows).insert(JournalRowMapper.toInsert(row));
+        await syncQueueRepo.enqueue(row, SyncOperation.insert);
+      }
+
+      for (final row in updatedRows) {
+        await (db.update(db.journalRows)..where((t) => t.id.equals(row.id)))
+            .write(JournalRowMapper.toUpdate(row));
+        await syncQueueRepo.enqueue(row, SyncOperation.update);
+      }
+
+      for (final row in deletedRows) {
+        await (db.update(db.journalRows)..where((t) => t.id.equals(row.id)))
+            .write(
+          drift_db.JournalRowsCompanion(
+            isDeleted: const Value(true),
+            deletedAt: Value(row.deletedAt),
+            updatedAt: Value(row.updatedAt),
+            version: Value(row.version),
+          ),
+        );
+        await syncQueueRepo.enqueue(row, SyncOperation.delete);
+      }
+    });
+  }
+
+  /// حذف نرم سند به همراه تمام ردیف‌های آن در یک تراکنش
+  @override
+  Future<void> softDeleteWithRows(Journal journal, List<JournalRow> rows) async {
+    await db.transaction(() async {
+      await (db.update(db.journals)..where((tbl) => tbl.id.equals(journal.id)))
+          .write(
+        drift_db.JournalsCompanion(
+          isDeleted: const Value(true),
+          deletedAt: Value(journal.deletedAt),
+          updatedAt: Value(journal.updatedAt),
+          version: Value(journal.version),
+        ),
+      );
+      await syncQueueRepo.enqueue(journal, SyncOperation.delete);
+
+      for (final row in rows) {
+        await (db.update(db.journalRows)..where((tbl) => tbl.id.equals(row.id)))
+            .write(
+          drift_db.JournalRowsCompanion(
+            isDeleted: const Value(true),
+            deletedAt: Value(row.deletedAt),
+            updatedAt: Value(row.updatedAt),
+            version: Value(row.version),
+          ),
+        );
+        await syncQueueRepo.enqueue(row, SyncOperation.delete);
+      }
+    });
+  }
+
+  /// شماره مرجع بعدی سند (بر اساس بیشترین شمارهٔ موجود)
+  ///
+  /// در معماری local-first شماره سند به صورت محلی تخصیص می‌یابد و در زمان
+  /// همگام‌سازی می‌تواند توسط سرور بازنویسی شود.
+  @override
+  Future<int> nextReferenceNumber() async {
+    final maxExpression = db.journals.referenceNumber.max();
+    final query = db.selectOnly(db.journals)..addColumns([maxExpression]);
+    final row = await query.getSingleOrNull();
+    final current = row?.read(maxExpression) ?? 0;
+    return current + 1;
+  }
+
   /// دسترسی یکبار خواند برای تمام اسناد فعال
   Future<List<Journal>> getAllActive() async {
     final rows = await (db.select(db.journals)
@@ -175,6 +275,7 @@ class JournalRepository implements JournalRepositoryContract {
   }
 
   /// دسترسی یکبار خواند برای ردیفهای یک سند
+  @override
   Future<List<JournalRow>> getJournalRowsByJournalId(String journalId) async {
     final rows = await (db.select(db.journalRows)
       ..where((tbl) => tbl.journalId.equals(journalId) & tbl.isDeleted.equals(false))
@@ -184,6 +285,7 @@ class JournalRepository implements JournalRepositoryContract {
   }
 
   /// دسترسی یکبار خواند برای ردیفهای یک سند بر اساس شماره سند
+  @override
   Future<List<JournalRow>> getJournalRowsByNoSnd(int noSnd) async {
     final rows = await (db.select(db.journalRows)
       ..where((tbl) => tbl.noSnd.equals(noSnd) & tbl.isDeleted.equals(false))

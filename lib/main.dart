@@ -2,7 +2,11 @@ import 'package:cloud_financial_x/ui/hesab/account_structure_page.dart';
 import 'package:cloud_financial_x/ui/hesab/hesab_form_controller.dart';
 
 import 'data/repository/hesab_repository.dart';
+import 'data/repository/journal_repository.dart';
+import 'data/repository/cost_center_repository.dart';
 import 'ui/product/product_form_controller.dart';
+import 'ui/journal/journal_form_controller.dart';
+import 'ui/journal/compound_document_page.dart';
 // import 'ui/product/product_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +16,8 @@ import 'data/repository/product_repository.dart';
 import 'data/repository/sync_queue_repository.dart';
 import 'domain/services/product_service.dart';
 import 'domain/services/hesab_service.dart';
+import 'domain/services/journal_service.dart';
+import 'domain/services/cost_center_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart' hide Provider, ChangeNotifierProvider;
 import 'package:go_router/go_router.dart';
 import 'screens/dashboard_screen.dart';
@@ -26,7 +32,6 @@ import 'screens/product_structure_screen.dart';
 import 'screens/product_list_screen.dart';
 // import 'screens/account_structure_screen.dart';
 import 'screens/customer_list_screen.dart';
-import 'screens/compound_document_screen.dart';
 import 'screens/advanced_settings_screen.dart';
 import 'screens/system_definitions_screen.dart';
 import 'screens/development_settings_screen.dart';
@@ -41,8 +46,12 @@ Future<void> main() async {
   final syncQueueRepo = SyncQueueRepository(db);
   final productRepo = ProductRepository(db, syncQueueRepo: syncQueueRepo);
   final hesabRepo = HesabRepository(db, syncQueueRepo: syncQueueRepo);
+  final journalRepo = JournalRepository(db, syncQueueRepo: syncQueueRepo);
+  final costCenterRepo = CostCenterRepository(db, syncQueueRepo: syncQueueRepo);
   final productService = ProductService(productRepo);
   final hesabService = HesabService(hesabRepo);
+  final journalService = JournalService(journalRepo);
+  final costCenterService = CostCenterService(costCenterRepo);
 
   runApp(
     MultiProvider(
@@ -51,10 +60,15 @@ Future<void> main() async {
         Provider.value(value: syncQueueRepo),
         Provider.value(value: productRepo),
         Provider.value(value: hesabRepo),
+        Provider.value(value: journalRepo),
+        Provider.value(value: costCenterRepo),
         Provider.value(value: productService),
         Provider.value(value: hesabService),
+        Provider.value(value: journalService),
+        Provider.value(value: costCenterService),
         ChangeNotifierProvider(create: (c) => ProductFormController(),),
         ChangeNotifierProvider(create: (c) => HesabFormController(),),
+        ChangeNotifierProvider(create: (c) => JournalFormController(),),
             // c.read<ProductRepository>(),
       ],
       child: const CloudFinancialApp(),
@@ -235,7 +249,7 @@ final GoRouter _router = GoRouter(
         ),
         GoRoute(
           path: '/compound-document',
-          builder: (context, state) => const CompoundDocumentScreen(),
+          builder: (context, state) => const CompoundDocumentPage(),
         ),
         GoRoute(
           path: '/advanced-settings',
