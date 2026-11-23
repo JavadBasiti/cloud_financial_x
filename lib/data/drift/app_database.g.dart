@@ -1778,14 +1778,25 @@ class $HesabsTable extends Hesabs with TableInfo<$HesabsTable, Hesab> {
     requiredDuringInsert: true,
   );
   @override
-  late final GeneratedColumnWithTypeConverter<AccountLevel, int> levelF =
+  late final GeneratedColumnWithTypeConverter<AccountLevel, int> level =
       GeneratedColumn<int>(
-        'level_f',
+        'level',
         aliasedName,
         false,
         type: DriftSqlType.int,
         requiredDuringInsert: true,
-      ).withConverter<AccountLevel>($HesabsTable.$converterlevelF);
+      ).withConverter<AccountLevel>($HesabsTable.$converterlevel);
+  static const VerificationMeta _parentIdMeta = const VerificationMeta(
+    'parentId',
+  );
+  @override
+  late final GeneratedColumn<String> parentId = GeneratedColumn<String>(
+    'parent_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _codeMeta = const VerificationMeta('code');
   @override
   late final GeneratedColumn<String> code = GeneratedColumn<String>(
@@ -1799,10 +1810,10 @@ class $HesabsTable extends Hesabs with TableInfo<$HesabsTable, Hesab> {
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _descFMeta = const VerificationMeta('descF');
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
-  late final GeneratedColumn<String> descF = GeneratedColumn<String>(
-    'desc_f',
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
     aliasedName,
     false,
     additionalChecks: GeneratedColumn.checkTextLength(
@@ -1812,12 +1823,12 @@ class $HesabsTable extends Hesabs with TableInfo<$HesabsTable, Hesab> {
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _crnPriceMeta = const VerificationMeta(
-    'crnPrice',
+  static const VerificationMeta _balanceMeta = const VerificationMeta(
+    'balance',
   );
   @override
-  late final GeneratedColumn<double> crnPrice = GeneratedColumn<double>(
-    'crn_price',
+  late final GeneratedColumn<double> balance = GeneratedColumn<double>(
+    'balance',
     aliasedName,
     true,
     type: DriftSqlType.double,
@@ -1834,12 +1845,12 @@ class $HesabsTable extends Hesabs with TableInfo<$HesabsTable, Hesab> {
     type: DriftSqlType.double,
     requiredDuringInsert: false,
   );
-  static const VerificationMeta _exteraDescMeta = const VerificationMeta(
-    'exteraDesc',
+  static const VerificationMeta _nameEnMeta = const VerificationMeta(
+    'nameEn',
   );
   @override
-  late final GeneratedColumn<String> exteraDesc = GeneratedColumn<String>(
-    'extera_desc',
+  late final GeneratedColumn<String> nameEn = GeneratedColumn<String>(
+    'name_en',
     aliasedName,
     false,
     additionalChecks: GeneratedColumn.checkTextLength(
@@ -1913,12 +1924,13 @@ class $HesabsTable extends Hesabs with TableInfo<$HesabsTable, Hesab> {
   @override
   List<GeneratedColumn> get $columns => [
     id,
-    levelF,
+    level,
+    parentId,
     code,
-    descF,
-    crnPrice,
+    name,
+    balance,
     fuPrice,
-    exteraDesc,
+    nameEn,
     createdAt,
     updatedAt,
     version,
@@ -1950,18 +1962,24 @@ class $HesabsTable extends Hesabs with TableInfo<$HesabsTable, Hesab> {
     } else if (isInserting) {
       context.missing(_codeMeta);
     }
-    if (data.containsKey('desc_f')) {
+    if (data.containsKey('name')) {
       context.handle(
-        _descFMeta,
-        descF.isAcceptableOrUnknown(data['desc_f']!, _descFMeta),
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
       );
     } else if (isInserting) {
-      context.missing(_descFMeta);
+      context.missing(_nameMeta);
     }
-    if (data.containsKey('crn_price')) {
+    if (data.containsKey('parent_id')) {
       context.handle(
-        _crnPriceMeta,
-        crnPrice.isAcceptableOrUnknown(data['crn_price']!, _crnPriceMeta),
+        _parentIdMeta,
+        parentId.isAcceptableOrUnknown(data['parent_id']!, _parentIdMeta),
+      );
+    }
+    if (data.containsKey('balance')) {
+      context.handle(
+        _balanceMeta,
+        balance.isAcceptableOrUnknown(data['balance']!, _balanceMeta),
       );
     }
     if (data.containsKey('fu_price')) {
@@ -1970,13 +1988,13 @@ class $HesabsTable extends Hesabs with TableInfo<$HesabsTable, Hesab> {
         fuPrice.isAcceptableOrUnknown(data['fu_price']!, _fuPriceMeta),
       );
     }
-    if (data.containsKey('extera_desc')) {
+    if (data.containsKey('name_en')) {
       context.handle(
-        _exteraDescMeta,
-        exteraDesc.isAcceptableOrUnknown(data['extera_desc']!, _exteraDescMeta),
+        _nameEnMeta,
+        nameEn.isAcceptableOrUnknown(data['name_en']!, _nameEnMeta),
       );
     } else if (isInserting) {
-      context.missing(_exteraDescMeta);
+      context.missing(_nameEnMeta);
     }
     if (data.containsKey('created_at')) {
       context.handle(
@@ -2025,31 +2043,35 @@ class $HesabsTable extends Hesabs with TableInfo<$HesabsTable, Hesab> {
         DriftSqlType.string,
         data['${effectivePrefix}id'],
       )!,
-      levelF: $HesabsTable.$converterlevelF.fromSql(
+      level: $HesabsTable.$converterlevel.fromSql(
         attachedDatabase.typeMapping.read(
           DriftSqlType.int,
-          data['${effectivePrefix}level_f'],
+          data['${effectivePrefix}level'],
         )!,
       ),
       code: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}code'],
       )!,
-      descF: attachedDatabase.typeMapping.read(
+      parentId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
-        data['${effectivePrefix}desc_f'],
+        data['${effectivePrefix}parent_id'],
+      ),
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
       )!,
-      crnPrice: attachedDatabase.typeMapping.read(
+      balance: attachedDatabase.typeMapping.read(
         DriftSqlType.double,
-        data['${effectivePrefix}crn_price'],
+        data['${effectivePrefix}balance'],
       ),
       fuPrice: attachedDatabase.typeMapping.read(
         DriftSqlType.double,
         data['${effectivePrefix}fu_price'],
       ),
-      exteraDesc: attachedDatabase.typeMapping.read(
+      nameEn: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
-        data['${effectivePrefix}extera_desc'],
+        data['${effectivePrefix}name_en'],
       )!,
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
@@ -2079,18 +2101,19 @@ class $HesabsTable extends Hesabs with TableInfo<$HesabsTable, Hesab> {
     return $HesabsTable(attachedDatabase, alias);
   }
 
-  static JsonTypeConverter2<AccountLevel, int, int> $converterlevelF =
+  static JsonTypeConverter2<AccountLevel, int, int> $converterlevel =
       const EnumIndexConverter<AccountLevel>(AccountLevel.values);
 }
 
 class Hesab extends DataClass implements Insertable<Hesab> {
   final String id;
-  final AccountLevel levelF;
+  final AccountLevel level;
+  final String? parentId;
   final String code;
-  final String descF;
-  final double? crnPrice;
+  final String name;
+  final double? balance;
   final double? fuPrice;
-  final String exteraDesc;
+  final String nameEn;
   final int createdAt;
   final int? updatedAt;
   final int version;
@@ -2098,12 +2121,13 @@ class Hesab extends DataClass implements Insertable<Hesab> {
   final int? deletedAt;
   const Hesab({
     required this.id,
-    required this.levelF,
+    required this.level,
+    this.parentId,
     required this.code,
-    required this.descF,
-    this.crnPrice,
+    required this.name,
+    this.balance,
     this.fuPrice,
-    required this.exteraDesc,
+    required this.nameEn,
     required this.createdAt,
     this.updatedAt,
     required this.version,
@@ -2115,19 +2139,22 @@ class Hesab extends DataClass implements Insertable<Hesab> {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
     {
-      map['level_f'] = Variable<int>(
-        $HesabsTable.$converterlevelF.toSql(levelF),
+      map['level'] = Variable<int>(
+        $HesabsTable.$converterlevel.toSql(level),
       );
     }
+    if (!nullToAbsent || parentId != null) {
+      map['parent_id'] = Variable<String>(parentId);
+    }
     map['code'] = Variable<String>(code);
-    map['desc_f'] = Variable<String>(descF);
-    if (!nullToAbsent || crnPrice != null) {
-      map['crn_price'] = Variable<double>(crnPrice);
+    map['name'] = Variable<String>(name);
+    if (!nullToAbsent || balance != null) {
+      map['balance'] = Variable<double>(balance);
     }
     if (!nullToAbsent || fuPrice != null) {
       map['fu_price'] = Variable<double>(fuPrice);
     }
-    map['extera_desc'] = Variable<String>(exteraDesc);
+    map['name_en'] = Variable<String>(nameEn);
     map['created_at'] = Variable<int>(createdAt);
     if (!nullToAbsent || updatedAt != null) {
       map['updated_at'] = Variable<int>(updatedAt);
@@ -2143,16 +2170,19 @@ class Hesab extends DataClass implements Insertable<Hesab> {
   HesabsCompanion toCompanion(bool nullToAbsent) {
     return HesabsCompanion(
       id: Value(id),
-      levelF: Value(levelF),
-      code: Value(code),
-      descF: Value(descF),
-      crnPrice: crnPrice == null && nullToAbsent
+      level: Value(level),
+      parentId: parentId == null && nullToAbsent
           ? const Value.absent()
-          : Value(crnPrice),
+          : Value(parentId),
+      code: Value(code),
+      name: Value(name),
+      balance: balance == null && nullToAbsent
+          ? const Value.absent()
+          : Value(balance),
       fuPrice: fuPrice == null && nullToAbsent
           ? const Value.absent()
           : Value(fuPrice),
-      exteraDesc: Value(exteraDesc),
+      nameEn: Value(nameEn),
       createdAt: Value(createdAt),
       updatedAt: updatedAt == null && nullToAbsent
           ? const Value.absent()
@@ -2172,14 +2202,15 @@ class Hesab extends DataClass implements Insertable<Hesab> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Hesab(
       id: serializer.fromJson<String>(json['id']),
-      levelF: $HesabsTable.$converterlevelF.fromJson(
-        serializer.fromJson<int>(json['levelF']),
+      level: $HesabsTable.$converterlevel.fromJson(
+        serializer.fromJson<int>(json['level']),
       ),
+      parentId: serializer.fromJson<String?>(json['parentId']),
       code: serializer.fromJson<String>(json['code']),
-      descF: serializer.fromJson<String>(json['descF']),
-      crnPrice: serializer.fromJson<double?>(json['crnPrice']),
+      name: serializer.fromJson<String>(json['name']),
+      balance: serializer.fromJson<double?>(json['balance']),
       fuPrice: serializer.fromJson<double?>(json['fuPrice']),
-      exteraDesc: serializer.fromJson<String>(json['exteraDesc']),
+      nameEn: serializer.fromJson<String>(json['nameEn']),
       createdAt: serializer.fromJson<int>(json['createdAt']),
       updatedAt: serializer.fromJson<int?>(json['updatedAt']),
       version: serializer.fromJson<int>(json['version']),
@@ -2192,14 +2223,15 @@ class Hesab extends DataClass implements Insertable<Hesab> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
-      'levelF': serializer.toJson<int>(
-        $HesabsTable.$converterlevelF.toJson(levelF),
+      'level': serializer.toJson<int>(
+        $HesabsTable.$converterlevel.toJson(level),
       ),
+      'parentId': serializer.toJson<String?>(parentId),
       'code': serializer.toJson<String>(code),
-      'descF': serializer.toJson<String>(descF),
-      'crnPrice': serializer.toJson<double?>(crnPrice),
+      'name': serializer.toJson<String>(name),
+      'balance': serializer.toJson<double?>(balance),
       'fuPrice': serializer.toJson<double?>(fuPrice),
-      'exteraDesc': serializer.toJson<String>(exteraDesc),
+      'nameEn': serializer.toJson<String>(nameEn),
       'createdAt': serializer.toJson<int>(createdAt),
       'updatedAt': serializer.toJson<int?>(updatedAt),
       'version': serializer.toJson<int>(version),
@@ -2210,12 +2242,13 @@ class Hesab extends DataClass implements Insertable<Hesab> {
 
   Hesab copyWith({
     String? id,
-    AccountLevel? levelF,
+    AccountLevel? level,
+    Value<String?> parentId = const Value.absent(),
     String? code,
-    String? descF,
-    Value<double?> crnPrice = const Value.absent(),
+    String? name,
+    Value<double?> balance = const Value.absent(),
     Value<double?> fuPrice = const Value.absent(),
-    String? exteraDesc,
+    String? nameEn,
     int? createdAt,
     Value<int?> updatedAt = const Value.absent(),
     int? version,
@@ -2223,12 +2256,13 @@ class Hesab extends DataClass implements Insertable<Hesab> {
     Value<int?> deletedAt = const Value.absent(),
   }) => Hesab(
     id: id ?? this.id,
-    levelF: levelF ?? this.levelF,
+    level: level ?? this.level,
+    parentId: parentId.present ? parentId.value : this.parentId,
     code: code ?? this.code,
-    descF: descF ?? this.descF,
-    crnPrice: crnPrice.present ? crnPrice.value : this.crnPrice,
+    name: name ?? this.name,
+    balance: balance.present ? balance.value : this.balance,
     fuPrice: fuPrice.present ? fuPrice.value : this.fuPrice,
-    exteraDesc: exteraDesc ?? this.exteraDesc,
+    nameEn: nameEn ?? this.nameEn,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt.present ? updatedAt.value : this.updatedAt,
     version: version ?? this.version,
@@ -2238,14 +2272,13 @@ class Hesab extends DataClass implements Insertable<Hesab> {
   Hesab copyWithCompanion(HesabsCompanion data) {
     return Hesab(
       id: data.id.present ? data.id.value : this.id,
-      levelF: data.levelF.present ? data.levelF.value : this.levelF,
+      level: data.level.present ? data.level.value : this.level,
+      parentId: data.parentId.present ? data.parentId.value : this.parentId,
       code: data.code.present ? data.code.value : this.code,
-      descF: data.descF.present ? data.descF.value : this.descF,
-      crnPrice: data.crnPrice.present ? data.crnPrice.value : this.crnPrice,
+      name: data.name.present ? data.name.value : this.name,
+      balance: data.balance.present ? data.balance.value : this.balance,
       fuPrice: data.fuPrice.present ? data.fuPrice.value : this.fuPrice,
-      exteraDesc: data.exteraDesc.present
-          ? data.exteraDesc.value
-          : this.exteraDesc,
+      nameEn: data.nameEn.present ? data.nameEn.value : this.nameEn,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       version: data.version.present ? data.version.value : this.version,
@@ -2258,12 +2291,13 @@ class Hesab extends DataClass implements Insertable<Hesab> {
   String toString() {
     return (StringBuffer('Hesab(')
           ..write('id: $id, ')
-          ..write('levelF: $levelF, ')
+          ..write('level: $level, ')
+          ..write('parentId: $parentId, ')
           ..write('code: $code, ')
-          ..write('descF: $descF, ')
-          ..write('crnPrice: $crnPrice, ')
+          ..write('name: $name, ')
+          ..write('balance: $balance, ')
           ..write('fuPrice: $fuPrice, ')
-          ..write('exteraDesc: $exteraDesc, ')
+          ..write('nameEn: $nameEn, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('version: $version, ')
@@ -2276,12 +2310,13 @@ class Hesab extends DataClass implements Insertable<Hesab> {
   @override
   int get hashCode => Object.hash(
     id,
-    levelF,
+    level,
+    parentId,
     code,
-    descF,
-    crnPrice,
+    name,
+    balance,
     fuPrice,
-    exteraDesc,
+    nameEn,
     createdAt,
     updatedAt,
     version,
@@ -2293,12 +2328,13 @@ class Hesab extends DataClass implements Insertable<Hesab> {
       identical(this, other) ||
       (other is Hesab &&
           other.id == this.id &&
-          other.levelF == this.levelF &&
+          other.level == this.level &&
+          other.parentId == this.parentId &&
           other.code == this.code &&
-          other.descF == this.descF &&
-          other.crnPrice == this.crnPrice &&
+          other.name == this.name &&
+          other.balance == this.balance &&
           other.fuPrice == this.fuPrice &&
-          other.exteraDesc == this.exteraDesc &&
+          other.nameEn == this.nameEn &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt &&
           other.version == this.version &&
@@ -2308,12 +2344,13 @@ class Hesab extends DataClass implements Insertable<Hesab> {
 
 class HesabsCompanion extends UpdateCompanion<Hesab> {
   final Value<String> id;
-  final Value<AccountLevel> levelF;
+  final Value<AccountLevel> level;
+  final Value<String?> parentId;
   final Value<String> code;
-  final Value<String> descF;
-  final Value<double?> crnPrice;
+  final Value<String> name;
+  final Value<double?> balance;
   final Value<double?> fuPrice;
-  final Value<String> exteraDesc;
+  final Value<String> nameEn;
   final Value<int> createdAt;
   final Value<int?> updatedAt;
   final Value<int> version;
@@ -2322,12 +2359,13 @@ class HesabsCompanion extends UpdateCompanion<Hesab> {
   final Value<int> rowid;
   const HesabsCompanion({
     this.id = const Value.absent(),
-    this.levelF = const Value.absent(),
+    this.level = const Value.absent(),
+    this.parentId = const Value.absent(),
     this.code = const Value.absent(),
-    this.descF = const Value.absent(),
-    this.crnPrice = const Value.absent(),
+    this.name = const Value.absent(),
+    this.balance = const Value.absent(),
     this.fuPrice = const Value.absent(),
-    this.exteraDesc = const Value.absent(),
+    this.nameEn = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.version = const Value.absent(),
@@ -2337,12 +2375,13 @@ class HesabsCompanion extends UpdateCompanion<Hesab> {
   });
   HesabsCompanion.insert({
     required String id,
-    required AccountLevel levelF,
+    required AccountLevel level,
+    this.parentId = const Value.absent(),
     required String code,
-    required String descF,
-    this.crnPrice = const Value.absent(),
+    required String name,
+    this.balance = const Value.absent(),
     this.fuPrice = const Value.absent(),
-    required String exteraDesc,
+    required String nameEn,
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.version = const Value.absent(),
@@ -2350,18 +2389,19 @@ class HesabsCompanion extends UpdateCompanion<Hesab> {
     this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
-       levelF = Value(levelF),
+       level = Value(level),
        code = Value(code),
-       descF = Value(descF),
-       exteraDesc = Value(exteraDesc);
+       name = Value(name),
+       nameEn = Value(nameEn);
   static Insertable<Hesab> custom({
     Expression<String>? id,
-    Expression<int>? levelF,
+    Expression<int>? level,
+    Expression<String>? parentId,
     Expression<String>? code,
-    Expression<String>? descF,
-    Expression<double>? crnPrice,
+    Expression<String>? name,
+    Expression<double>? balance,
     Expression<double>? fuPrice,
-    Expression<String>? exteraDesc,
+    Expression<String>? nameEn,
     Expression<int>? createdAt,
     Expression<int>? updatedAt,
     Expression<int>? version,
@@ -2371,12 +2411,13 @@ class HesabsCompanion extends UpdateCompanion<Hesab> {
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
-      if (levelF != null) 'level_f': levelF,
+      if (level != null) 'level': level,
+      if (parentId != null) 'parent_id': parentId,
       if (code != null) 'code': code,
-      if (descF != null) 'desc_f': descF,
-      if (crnPrice != null) 'crn_price': crnPrice,
+      if (name != null) 'name': name,
+      if (balance != null) 'balance': balance,
       if (fuPrice != null) 'fu_price': fuPrice,
-      if (exteraDesc != null) 'extera_desc': exteraDesc,
+      if (nameEn != null) 'name_en': nameEn,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (version != null) 'version': version,
@@ -2388,12 +2429,13 @@ class HesabsCompanion extends UpdateCompanion<Hesab> {
 
   HesabsCompanion copyWith({
     Value<String>? id,
-    Value<AccountLevel>? levelF,
+    Value<AccountLevel>? level,
+    Value<String?>? parentId,
     Value<String>? code,
-    Value<String>? descF,
-    Value<double?>? crnPrice,
+    Value<String>? name,
+    Value<double?>? balance,
     Value<double?>? fuPrice,
-    Value<String>? exteraDesc,
+    Value<String>? nameEn,
     Value<int>? createdAt,
     Value<int?>? updatedAt,
     Value<int>? version,
@@ -2403,12 +2445,13 @@ class HesabsCompanion extends UpdateCompanion<Hesab> {
   }) {
     return HesabsCompanion(
       id: id ?? this.id,
-      levelF: levelF ?? this.levelF,
+      level: level ?? this.level,
+      parentId: parentId ?? this.parentId,
       code: code ?? this.code,
-      descF: descF ?? this.descF,
-      crnPrice: crnPrice ?? this.crnPrice,
+      name: name ?? this.name,
+      balance: balance ?? this.balance,
       fuPrice: fuPrice ?? this.fuPrice,
-      exteraDesc: exteraDesc ?? this.exteraDesc,
+      nameEn: nameEn ?? this.nameEn,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       version: version ?? this.version,
@@ -2424,25 +2467,28 @@ class HesabsCompanion extends UpdateCompanion<Hesab> {
     if (id.present) {
       map['id'] = Variable<String>(id.value);
     }
-    if (levelF.present) {
-      map['level_f'] = Variable<int>(
-        $HesabsTable.$converterlevelF.toSql(levelF.value),
+    if (level.present) {
+      map['level'] = Variable<int>(
+        $HesabsTable.$converterlevel.toSql(level.value),
       );
+    }
+    if (parentId.present) {
+      map['parent_id'] = Variable<String>(parentId.value);
     }
     if (code.present) {
       map['code'] = Variable<String>(code.value);
     }
-    if (descF.present) {
-      map['desc_f'] = Variable<String>(descF.value);
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
     }
-    if (crnPrice.present) {
-      map['crn_price'] = Variable<double>(crnPrice.value);
+    if (balance.present) {
+      map['balance'] = Variable<double>(balance.value);
     }
     if (fuPrice.present) {
       map['fu_price'] = Variable<double>(fuPrice.value);
     }
-    if (exteraDesc.present) {
-      map['extera_desc'] = Variable<String>(exteraDesc.value);
+    if (nameEn.present) {
+      map['name_en'] = Variable<String>(nameEn.value);
     }
     if (createdAt.present) {
       map['created_at'] = Variable<int>(createdAt.value);
@@ -2469,12 +2515,13 @@ class HesabsCompanion extends UpdateCompanion<Hesab> {
   String toString() {
     return (StringBuffer('HesabsCompanion(')
           ..write('id: $id, ')
-          ..write('levelF: $levelF, ')
+          ..write('level: $level, ')
+          ..write('parentId: $parentId, ')
           ..write('code: $code, ')
-          ..write('descF: $descF, ')
-          ..write('crnPrice: $crnPrice, ')
+          ..write('name: $name, ')
+          ..write('balance: $balance, ')
           ..write('fuPrice: $fuPrice, ')
-          ..write('exteraDesc: $exteraDesc, ')
+          ..write('nameEn: $nameEn, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('version: $version, ')
@@ -4992,11 +5039,11 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   );
   late final Index hesabName = Index(
     'hesab_name',
-    'CREATE INDEX hesab_name ON hesabs (desc_f)',
+    'CREATE INDEX hesab_name ON hesabs (name)',
   );
   late final Index hesabSearch = Index(
     'hesab_search',
-    'CREATE INDEX hesab_search ON hesabs (level_f, code, desc_f)',
+    'CREATE INDEX hesab_search ON hesabs (level, code, name)',
   );
   late final Index dateJournalInx = Index(
     'dateJournal_inx',
@@ -5837,12 +5884,13 @@ typedef $$SyncQueueTableProcessedTableManager =
 typedef $$HesabsTableCreateCompanionBuilder =
     HesabsCompanion Function({
       required String id,
-      required AccountLevel levelF,
+      required AccountLevel level,
+      Value<String?> parentId,
       required String code,
-      required String descF,
-      Value<double?> crnPrice,
+      required String name,
+      Value<double?> balance,
       Value<double?> fuPrice,
-      required String exteraDesc,
+      required String nameEn,
       Value<int> createdAt,
       Value<int?> updatedAt,
       Value<int> version,
@@ -5853,12 +5901,13 @@ typedef $$HesabsTableCreateCompanionBuilder =
 typedef $$HesabsTableUpdateCompanionBuilder =
     HesabsCompanion Function({
       Value<String> id,
-      Value<AccountLevel> levelF,
+      Value<AccountLevel> level,
+      Value<String?> parentId,
       Value<String> code,
-      Value<String> descF,
-      Value<double?> crnPrice,
+      Value<String> name,
+      Value<double?> balance,
       Value<double?> fuPrice,
-      Value<String> exteraDesc,
+      Value<String> nameEn,
       Value<int> createdAt,
       Value<int?> updatedAt,
       Value<int> version,
@@ -5904,24 +5953,29 @@ class $$HesabsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnWithTypeConverterFilters<AccountLevel, AccountLevel, int> get levelF =>
+  ColumnWithTypeConverterFilters<AccountLevel, AccountLevel, int> get level =>
       $composableBuilder(
-        column: $table.levelF,
+        column: $table.level,
         builder: (column) => ColumnWithTypeConverterFilters(column),
       );
+
+  ColumnFilters<String> get parentId => $composableBuilder(
+    column: $table.parentId,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<String> get code => $composableBuilder(
     column: $table.code,
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get descF => $composableBuilder(
-    column: $table.descF,
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<double> get crnPrice => $composableBuilder(
-    column: $table.crnPrice,
+  ColumnFilters<double> get balance => $composableBuilder(
+    column: $table.balance,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -5930,8 +5984,8 @@ class $$HesabsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get exteraDesc => $composableBuilder(
-    column: $table.exteraDesc,
+  ColumnFilters<String> get nameEn => $composableBuilder(
+    column: $table.nameEn,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -6000,8 +6054,13 @@ class $$HesabsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get levelF => $composableBuilder(
-    column: $table.levelF,
+  ColumnOrderings<int> get level => $composableBuilder(
+    column: $table.level,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get parentId => $composableBuilder(
+    column: $table.parentId,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -6010,13 +6069,13 @@ class $$HesabsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get descF => $composableBuilder(
-    column: $table.descF,
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<double> get crnPrice => $composableBuilder(
-    column: $table.crnPrice,
+  ColumnOrderings<double> get balance => $composableBuilder(
+    column: $table.balance,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -6025,8 +6084,8 @@ class $$HesabsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get exteraDesc => $composableBuilder(
-    column: $table.exteraDesc,
+  ColumnOrderings<String> get nameEn => $composableBuilder(
+    column: $table.nameEn,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -6068,23 +6127,26 @@ class $$HesabsTableAnnotationComposer
   GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
-  GeneratedColumnWithTypeConverter<AccountLevel, int> get levelF =>
-      $composableBuilder(column: $table.levelF, builder: (column) => column);
+  GeneratedColumnWithTypeConverter<AccountLevel, int> get level =>
+      $composableBuilder(column: $table.level, builder: (column) => column);
+
+  GeneratedColumn<String> get parentId =>
+      $composableBuilder(column: $table.parentId, builder: (column) => column);
 
   GeneratedColumn<String> get code =>
       $composableBuilder(column: $table.code, builder: (column) => column);
 
-  GeneratedColumn<String> get descF =>
-      $composableBuilder(column: $table.descF, builder: (column) => column);
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
 
-  GeneratedColumn<double> get crnPrice =>
-      $composableBuilder(column: $table.crnPrice, builder: (column) => column);
+  GeneratedColumn<double> get balance =>
+      $composableBuilder(column: $table.balance, builder: (column) => column);
 
   GeneratedColumn<double> get fuPrice =>
       $composableBuilder(column: $table.fuPrice, builder: (column) => column);
 
-  GeneratedColumn<String> get exteraDesc => $composableBuilder(
-    column: $table.exteraDesc,
+  GeneratedColumn<String> get nameEn => $composableBuilder(
+    column: $table.nameEn,
     builder: (column) => column,
   );
 
@@ -6158,12 +6220,13 @@ class $$HesabsTableTableManager
           updateCompanionCallback:
               ({
                 Value<String> id = const Value.absent(),
-                Value<AccountLevel> levelF = const Value.absent(),
+                Value<AccountLevel> level = const Value.absent(),
+                Value<String?> parentId = const Value.absent(),
                 Value<String> code = const Value.absent(),
-                Value<String> descF = const Value.absent(),
-                Value<double?> crnPrice = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<double?> balance = const Value.absent(),
                 Value<double?> fuPrice = const Value.absent(),
-                Value<String> exteraDesc = const Value.absent(),
+                Value<String> nameEn = const Value.absent(),
                 Value<int> createdAt = const Value.absent(),
                 Value<int?> updatedAt = const Value.absent(),
                 Value<int> version = const Value.absent(),
@@ -6172,12 +6235,13 @@ class $$HesabsTableTableManager
                 Value<int> rowid = const Value.absent(),
               }) => HesabsCompanion(
                 id: id,
-                levelF: levelF,
+                level: level,
+                parentId: parentId,
                 code: code,
-                descF: descF,
-                crnPrice: crnPrice,
+                name: name,
+                balance: balance,
                 fuPrice: fuPrice,
-                exteraDesc: exteraDesc,
+                nameEn: nameEn,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 version: version,
@@ -6188,12 +6252,13 @@ class $$HesabsTableTableManager
           createCompanionCallback:
               ({
                 required String id,
-                required AccountLevel levelF,
+                required AccountLevel level,
+                Value<String?> parentId = const Value.absent(),
                 required String code,
-                required String descF,
-                Value<double?> crnPrice = const Value.absent(),
+                required String name,
+                Value<double?> balance = const Value.absent(),
                 Value<double?> fuPrice = const Value.absent(),
-                required String exteraDesc,
+                required String nameEn,
                 Value<int> createdAt = const Value.absent(),
                 Value<int?> updatedAt = const Value.absent(),
                 Value<int> version = const Value.absent(),
@@ -6202,12 +6267,13 @@ class $$HesabsTableTableManager
                 Value<int> rowid = const Value.absent(),
               }) => HesabsCompanion.insert(
                 id: id,
-                levelF: levelF,
+                level: level,
+                parentId: parentId,
                 code: code,
-                descF: descF,
-                crnPrice: crnPrice,
+                name: name,
+                balance: balance,
                 fuPrice: fuPrice,
-                exteraDesc: exteraDesc,
+                nameEn: nameEn,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 version: version,

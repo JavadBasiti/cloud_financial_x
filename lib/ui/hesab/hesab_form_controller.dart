@@ -6,7 +6,7 @@ import 'package:cloud_financial_x/ui/form/validator.dart';
 import 'package:uuid/uuid.dart';
 
 /// کنترلر فرم برای مدیریت سرفصل (Hesab)
-/// 
+///
 /// مسئولیت‌های این کلاس:
 /// - نگه‌داری وضعیت فیلدهای فرم
 /// - اعتبار‌سنجی تمام فیلدها
@@ -28,31 +28,35 @@ class HesabFormController extends ChangeNotifier {
     _initializeFields();
   }
 
-  /// مقدارد‌هی اولیه فیلدها
+  /// مقداردهی اولیه فیلدها
   void _initializeFields() {
     _fields = {
-      'levelF': FormField<int>(
-        value: _hesab?.levelF.index ?? 0,
+      'level': FormField<int>(
+        value: _hesab?.level.index ?? AccountLevel.level1.index,
         validators: [Validators.positive()],
+      ),
+      'parentId': FormField<String>(
+        value: _hesab?.parentId ?? '',
+        validators: [],
       ),
       'code': FormField<String>(
         value: _hesab?.code ?? '',
         validators: [Validators.required(), Validators.minLength(1)],
       ),
-      'descF': FormField<String>(
-        value: _hesab?.descF ?? '',
+      'name': FormField<String>(
+        value: _hesab?.name ?? '',
         validators: [Validators.required()],
       ),
-      'crnPrice': FormField<double>(
-        value: _hesab?.crnPrice ?? 0.0,
+      'balance': FormField<double>(
+        value: _hesab?.balance ?? 0.0,
         validators: [Validators.nonNegative()],
       ),
       'fuPrice': FormField<double>(
         value: _hesab?.fuPrice ?? 0.0,
         validators: [Validators.nonNegative()],
       ),
-      'exteraDesc': FormField<String>(
-        value: _hesab?.exteraDesc ?? '',
+      'nameEn': FormField<String>(
+        value: _hesab?.nameEn ?? '',
         validators: [],
       ),
     };
@@ -64,13 +68,19 @@ class HesabFormController extends ChangeNotifier {
   }
 
   /// getterهای اختصاصی برای فیلدها
-  FormField<int> get levelF => getField<int>('levelF');
+  FormField<int> get level => getField<int>('level');
+
+  FormField<String> get parentId => getField<String>('parentId');
+
   FormField<String> get code => getField<String>('code');
 
-  FormField<String> get descF => getField<String>('descF');
-  FormField<double> get crnPrice => getField<double>('crnPrice');
+  FormField<String> get name => getField<String>('name');
+
+  FormField<double> get balance => getField<double>('balance');
+
   FormField<double> get fuPrice => getField<double>('fuPrice');
-  FormField<String> get exteraDesc => getField<String>('exteraDesc');
+
+  FormField<String> get nameEn => getField<String>('nameEn');
 
   /// اعتبار‌سنجی تمام فیلدها
   bool validateAll() {
@@ -84,17 +94,20 @@ class HesabFormController extends ChangeNotifier {
 
   /// به‌روزرسانی سرفصل با مقادیر جدید
   void _updateHesab() {
-    final levelIndex = getField<int>('levelF').value;
+    final levelIndex = getField<int>('level').value;
     final level = AccountLevel.values[levelIndex];
 
     _hesab = Hesab(
       id: _hesab?.id ?? _uuid.v4(),
-      levelF: level,
+      level: level,
+      parentId: getField<String>('parentId').value.trim().isEmpty
+          ? null
+          : getField<String>('parentId').value.trim(),
       code: getField<String>('code').value.trim(),
-      descF: getField<String>('descF').value.trim(),
-      crnPrice: getField<double>('crnPrice').value,
+      name: getField<String>('name').value.trim(),
+      balance: getField<double>('balance').value,
       fuPrice: getField<double>('fuPrice').value,
-      exteraDesc: getField<String>('exteraDesc').value.trim(),
+      nameEn: getField<String>('nameEn').value.trim(),
       createdAt: _hesab?.createdAt ?? DateTime.now().millisecondsSinceEpoch,
       updatedAt: DateTime.now().millisecondsSinceEpoch,
       version: (_hesab?.version ?? 0) + 1,

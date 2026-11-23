@@ -155,7 +155,7 @@ class _JournalRowDialogState extends State<_JournalRowDialog> {
                           (h) => DropdownMenuItem<String>(
                             value: h.id,
                             child: Text(
-                              '${h.code} - ${h.descF}',
+                              '${h.code} - ${h.name}',
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),

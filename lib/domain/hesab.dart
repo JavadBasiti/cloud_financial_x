@@ -16,39 +16,41 @@ class Hesab with _$Hesab implements SyncEntity {
   const factory Hesab({
     /// شناسه یکتا (UUID)
     required String id,
-    
+
     /// سطح سرفصل (۰ تا ۴)
-    required AccountLevel levelF,
-    ///سرفصل اصلی
-    Hesab? parent,
+    required AccountLevel level,
+
+    /// شناسه سرفصل اصلی (parent) - null یعنی سرفصل ریشه
+    String? parentId,
+
     /// کد سرفصل
     required String code,
-    
-    /// توضیحات سرفصل
-    required String descF,
-    
-    /// قیمت به ارز بومی
-    double? crnPrice,
-    
+
+    /// نام سرفصل
+    required String name,
+
+    /// موجودی حساب به ارز بومی
+    double? balance,
+
     /// قیمت به ارز خارجی
     double? fuPrice,
-    
-    /// توضیحات اضافی
+
+    /// نام انگلیسی سرفصل
     @Default('')
-    String exteraDesc,
-    
+    String nameEn,
+
     /// زمان ایجاد (میلی‌ثانیه)
     required int createdAt,
-    
+
     /// زمان آخرین به‌روزرسانی (میلی‌ثانیه)
     required int updatedAt,
-    
+
     /// نسخه برای تعارض‌زدایی
     required int version,
-    
+
     /// آیا حذف شده است؟
     required bool isDeleted,
-    
+
     /// زمان حذف (میلی‌ثانیه)
     int? deletedAt,
   }) = _Hesab;
@@ -64,13 +66,13 @@ class Hesab with _$Hesab implements SyncEntity {
   @override
   Map<String, dynamic> toSyncJson() => {
     'id': id,
-    'levelF': levelF.index,
-    'parent':parent,
+    'level': level.index,
+    'parentId': parentId,
     'code': code,
-    'descF': descF,
-    'crnPrice': crnPrice,
+    'name': name,
+    'balance': balance,
     'fuPrice': fuPrice,
-    'exteraDesc': exteraDesc,
+    'nameEn': nameEn,
     'createdAt': createdAt,
     'updatedAt': updatedAt,
     'version': version,

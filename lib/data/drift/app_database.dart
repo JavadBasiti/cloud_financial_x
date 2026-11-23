@@ -10,6 +10,7 @@ import '../../domain/enums/cost_center_type.dart';
 import 'product_table.dart';
 import 'sync_queue_table.dart';
 import 'hesab_table.dart';
+import 'hesab_seed.dart';
 import 'journal_table.dart';
 import 'journal_row_table.dart';
 import 'cost_center_table.dart';
@@ -21,12 +22,14 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_open());
 
   @override
-  int get schemaVersion => 6;
+  int get schemaVersion => 7;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
         onCreate: (m) async {
           await m.createAll();
+          // وارد کردن ساختار حسابداری default (Chart of Accounts)
+          await seedDefaultHesabs(this);
         },
         onUpgrade: (m, from, to) async {
           if (from == 1) {
@@ -51,6 +54,25 @@ class AppDatabase extends _$AppDatabase {
           if (from < 6) {
             await m.addColumn(journalRows, journalRows.prBed);
             await m.addColumn(journalRows, journalRows.media);
+          }
+
+          // Migration v6 -> v7:
+          // - تک‌تک تغییر نام کالتب‌های جدول hesabs
+          //   (desc_f -> name, level_f -> level, crn_price -> balance,
+          //   extera_desc -> name_en)
+          // - افزودن کالتب parent_id برای ارجاع حساب به سرفصل اصلی
+          // - وارد کردن ساختار حسابداری default (Chart of Accounts)
+          if (from < 7) {
+            await m.issueCustomQuery(
+                'ALTER TABLE hesabs RENAME COLUMN "desc_f" TO "name"');
+            await m.issueCustomQuery(
+                'ALTER TABLE hesabs RENAME COLUMN "level_f" TO "level"');
+            await m.issueCustomQuery(
+                'ALTER TABLE hesabs RENAME COLUMN "crn_price" TO "balance"');
+            await m.issueCustomQuery(
+                'ALTER TABLE hesabs RENAME COLUMN "extera_desc" TO "name_en"');
+            await m.addColumn(hesabs, hesabs.parentId);
+            await seedDefaultHesabs(this);
           }
         },
       );

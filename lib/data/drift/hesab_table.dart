@@ -1,24 +1,26 @@
 import 'package:drift/drift.dart';
 import '../../domain/enums/account_level.dart';
 
-//سرقصلهای حسابداری accounting code
-@TableIndex(name: 'hesab_name', columns: {#descF})
-@TableIndex(name: 'hesab_search', columns: {#levelF,#code,#descF})
+//سرفصلهای حسابداری accounting code
+@TableIndex(name: 'hesab_name', columns: {#name})
+@TableIndex(name: 'hesab_search', columns: {#level,#code,#name})
 class Hesabs extends Table {
   //UUID
   TextColumn get id => text().withLength(min: 36, max: 36)();
   // سطح حساب فقط شامل: 0 یا 1 یا 2 یا 3 یا 4
-  IntColumn get levelF => intEnum<AccountLevel>()();
+  IntColumn get level => intEnum<AccountLevel>()();
+  // شناسه سرفصل اصلی (null یعنی سرفصل ریشه)
+  TextColumn get parentId => text().nullable()();
   // کد حساب
   TextColumn get code => text().withLength(min: 1, max: 20)();
-  // توضیحات حساب (جایگزین name)
-  TextColumn get descF => text().withLength(min: 1, max: 255)();
-  //
-  RealColumn get crnPrice => real().nullable()();//.withDefault(const Constant(0))();
+  // نام حساب
+  TextColumn get name => text().withLength(min: 1, max: 255)();
+  // موجودی حساب به ارز بومی
+  RealColumn get balance => real().nullable()();//.withDefault(const Constant(0))();
   //
   RealColumn get fuPrice => real().nullable()();//.withDefault(const Constant(0))();
-  //
-  TextColumn get exteraDesc => text().withLength(min: 0, max: 1500)();
+  // نام انگلیسی حساب
+  TextColumn get nameEn => text().withLength(min: 0, max: 1500)();
 
   //فیلدهای عمومی
   IntColumn get createdAt =>  integer().withDefault(currentDate.unixepoch)();

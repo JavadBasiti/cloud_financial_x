@@ -7,12 +7,13 @@ class HesabMapper {
   /// تبدیل رکورد Drift به Hesab Domain
   static Hesab toDomain(drift_db.Hesab r) => Hesab(
     id: r.id,
-    levelF: r.levelF,
+    level: r.level,
+    parentId: r.parentId,
     code: r.code,
-    descF: r.descF,
-    crnPrice: r.crnPrice,
+    name: r.name,
+    balance: r.balance,
     fuPrice: r.fuPrice,
-    exteraDesc: r.exteraDesc,
+    nameEn: r.nameEn,
     createdAt: r.createdAt,
     updatedAt: r.updatedAt ?? r.createdAt,
     version: r.version,
@@ -26,12 +27,13 @@ class HesabMapper {
 
     return drift_db.HesabsCompanion.insert(
       id: h.id,
-      levelF: h.levelF,
+      level: h.level,
+      parentId: Value(h.parentId),
       code: h.code,
-      descF: h.descF,
-      crnPrice: Value(h.crnPrice),
+      name: h.name,
+      balance: Value(h.balance),
       fuPrice: Value(h.fuPrice),
-      exteraDesc: h.exteraDesc,
+      nameEn: h.nameEn,
       createdAt: Value(now),
       updatedAt: Value(now),
       version: const Value(1),
@@ -44,12 +46,13 @@ class HesabMapper {
 
     return drift_db.HesabsCompanion(
       id: Value(h.id),
-      levelF: Value(h.levelF),
+      level: Value(h.level),
+      parentId: Value(h.parentId),
       code: Value(h.code),
-      descF: Value(h.descF),
-      crnPrice: Value(h.crnPrice),
+      name: Value(h.name),
+      balance: Value(h.balance),
       fuPrice: Value(h.fuPrice),
-      exteraDesc: Value(h.exteraDesc),
+      nameEn: Value(h.nameEn),
       updatedAt: Value(now),
       version: Value(h.version),
     );

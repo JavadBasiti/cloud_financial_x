@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:cloud_financial_x/domain/enums/account_level.dart';
 import 'package:cloud_financial_x/domain/hesab.dart';
 import 'package:cloud_financial_x/domain/services/hesab_service.dart';
 import 'package:cloud_financial_x/ui/hesab/hesab_form_controller.dart';
@@ -17,176 +20,100 @@ class AccountStructurePage extends StatefulWidget {
 class _AccountStructurePageState extends State<AccountStructurePage> {
   String? selectedAccount;
   Set<String> expandedAccounts = <String>{};
-  bool isAddingAccount = false;
 
-  final List<AccountData> accounts = [
-    AccountData(
-      id: '1',
-      code: '1000',
-      name: 'دارایی‌های جاری',
-      nameEn: 'Current Assets',
-      type: AccountType.asset,
-      level: 1,
-      balance: 125000000,
-      children: [
-        AccountData(
-          id: '1-1',
-          code: '1100',
-          name: 'نقد و بانک',
-          nameEn: 'Cash & Bank',
-          type: AccountType.asset,
-          level: 2,
-          balance: 85000000,
-          children: [
-            AccountData(
-              id: '1-1-1',
-              code: '1101',
-              name: 'صندوق',
-              nameEn: 'Cash',
-              type: AccountType.asset,
-              level: 3,
-              balance: 15000000,
-              children: [],
-            ),
-            AccountData(
-              id: '1-1-2',
-              code: '1102',
-              name: 'بانک ملی',
-              nameEn: 'Melli Bank',
-              type: AccountType.asset,
-              level: 3,
-              balance: 45000000,
-              children: [],
-            ),
-            AccountData(
-              id: '1-1-3',
-              code: '1103',
-              name: 'بانک پارسیان',
-              nameEn: 'Parsian Bank',
-              type: AccountType.asset,
-              level: 3,
-              balance: 25000000,
-              children: [],
-            ),
-          ],
-        ),
-        AccountData(
-          id: '1-2',
-          code: '1200',
-          name: 'حساب‌های دریافتنی',
-          nameEn: 'Accounts Receivable',
-          type: AccountType.asset,
-          level: 2,
-          balance: 40000000,
-          children: [
-            AccountData(
-              id: '1-2-1',
-              code: '1201',
-              name: 'مشتریان',
-              nameEn: 'Customers',
-              type: AccountType.asset,
-              level: 3,
-              balance: 35000000,
-              children: [],
-            ),
-            AccountData(
-              id: '1-2-2',
-              code: '1202',
-              name: 'چک دریافتنی',
-              nameEn: 'Notes Receivable',
-              type: AccountType.asset,
-              level: 3,
-              balance: 5000000,
-              children: [],
-            ),
-          ],
-        ),
-      ],
-    ),
-    AccountData(
-      id: '2',
-      code: '2000',
-      name: 'بدهی‌های جاری',
-      nameEn: 'Current Liabilities',
-      type: AccountType.liability,
-      level: 1,
-      balance: 75000000,
-      children: [
-        AccountData(
-          id: '2-1',
-          code: '2100',
-          name: 'حساب‌های پرداختنی',
-          nameEn: 'Accounts Payable',
-          type: AccountType.liability,
-          level: 2,
-          balance: 45000000,
-          children: [
-            AccountData(
-              id: '2-1-1',
-              code: '2101',
-              name: 'تامین‌کنندگان',
-              nameEn: 'Suppliers',
-              type: AccountType.liability,
-              level: 3,
-              balance: 40000000,
-              children: [],
-            ),
-            AccountData(
-              id: '2-1-2',
-              code: '2102',
-              name: 'چک پرداختنی',
-              nameEn: 'Notes Payable',
-              type: AccountType.liability,
-              level: 3,
-              balance: 5000000,
-              children: [],
-            ),
-          ],
-        ),
-        AccountData(
-          id: '2-2',
-          code: '2200',
-          name: 'بدهی‌های کوتاه‌مدت',
-          nameEn: 'Short-term Debt',
-          type: AccountType.liability,
-          level: 2,
-          balance: 30000000,
-          children: [],
-        ),
-      ],
-    ),
-    AccountData(
-      id: '3',
-      code: '3000',
-      name: 'درآمدها',
-      nameEn: 'Revenues',
-      type: AccountType.income,
-      level: 1,
-      balance: 200000000,
-      children: [
-        AccountData(
-          id: '3-1',
-          code: '3100',
-          name: 'فروش کالا',
-          nameEn: 'Sales',
-          type: AccountType.income,
-          level: 2,
-          balance: 180000000,
-          children: [],
-        ),
-        AccountData(
-          id: '3-2',
-          code: '3200',
-          name: 'درآمد خدمات',
-          nameEn: 'Service Revenue',
-          type: AccountType.income,
-          level: 2,
-          balance: 20000000,
-          children: [],
-        ),
-      ],
-    ),
-  ];
+  /// درخت حساب‌ها از سرفصل‌های فعال (از پایگاه‌داده می‌آید)
+  List<AccountData> _accounts = const [];
+
+  /// خطایط flat برای جستجوی سرفصل
+  final Map<String, Hesab> _hesabById = {};
+
+  late final StreamSubscription<List<Hesab>> _hesabSub;
+
+  @override
+  void initState() {
+    super.initState();
+    _accounts = const [];
+    // دریافت داده‌ها از پایگاه‌داده به صورت واکنشی
+    // هر زمان یک سرفصل اضافه/ویرایش/حذف شود، درخت حساب‌ها بازسازی می‌شود
+    _hesabSub = context.read<HesabService>().watchHesabs().listen((items) {
+      if (!mounted) return;
+      setState(() {
+        _hesabById.clear();
+        for (final hesab in items) {
+          _hesabById[hesab.id] = hesab;
+        }
+        _accounts = _buildTree(items);
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _hesabSub.cancel();
+    super.dispose();
+  }
+
+  /// ساخت درخت حساب‌ها از لیست flat سرفصل‌های پایگاه‌داده
+  List<AccountData> _buildTree(List<Hesab> hesabs) {
+    final active = hesabs.where((h) => !h.isDeleted).toList();
+
+    // گروه‌بندی سرفصل‌ها بر اساس شناسه والد
+    final byParent = <String?, List<Hesab>>{};
+    for (final hesab in active) {
+      final key = (hesab.parentId ?? '').isEmpty ? null : hesab.parentId;
+      byParent.putIfAbsent(key, () => []).add(hesab);
+    }
+    for (final list in byParent.values) {
+      list.sort((a, b) => a.code.compareTo(b.code));
+    }
+
+    // ساخت节点 با جلوگیری از حلقهٔ بازگشتی (A والد B و B والد A)
+    AccountData? build(Hesab hesab, Set<String> path) {
+      if (!path.add(hesab.id)) return null;
+      final children = <AccountData>[];
+      for (final child in byParent[hesab.id] ?? const <Hesab>[]) {
+        final node = build(child, {...path});
+        if (node != null) children.add(node);
+      }
+      path.remove(hesab.id);
+      return AccountData(
+        id: hesab.id,
+        code: hesab.code,
+        name: hesab.name,
+        nameEn: hesab.nameEn,
+        type: _accountTypeOf(hesab.code),
+        level: hesab.level.index,
+        balance: (hesab.balance ?? 0).toInt(),
+        children: children,
+      );
+    }
+
+    final roots = <AccountData>[];
+    for (final hesab in byParent[null] ?? const <Hesab>[]) {
+      final node = build(hesab, <String>{});
+      if (node != null) roots.add(node);
+    }
+
+    // حساب‌های بی‌والد (والد حذف‌شده یا نامعتبر) را در سطح ریشه قرار می‌دهیم
+    final consumed = <String>{};
+    void collect(AccountData node) {
+      consumed.add(node.id);
+      for (final child in node.children) {
+        collect(child);
+      }
+    }
+    for (final root in roots) {
+      collect(root);
+    }
+    for (final hesab in active) {
+      if (!consumed.contains(hesab.id)) {
+        final node = build(hesab, <String>{});
+        if (node != null) roots.add(node);
+      }
+    }
+    roots.sort((a, b) => a.code.compareTo(b.code));
+    return roots;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -309,7 +236,7 @@ class _AccountStructurePageState extends State<AccountStructurePage> {
                       ),
                     ),
                     ElevatedButton(
-                      onPressed: () => _showEntityDialog(),//() => setState(() => isAddingAccount = true),
+                      onPressed: () => _showEntityDialog(),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green.shade600,
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -330,7 +257,7 @@ class _AccountStructurePageState extends State<AccountStructurePage> {
                 Expanded(
                   child: SingleChildScrollView(
                     child: Column(
-                      children: accounts.map((account) => _buildAccountItem(account, 0)).toList(),
+                      children: _accounts.map((account) => _buildAccountItem(account, 0)).toList(),
                     ),
                   ),
                 ),
@@ -338,14 +265,14 @@ class _AccountStructurePageState extends State<AccountStructurePage> {
             ),
           ),
         ),
-        
+
         // Account Details
         Expanded(
           flex: 1,
           child: Container(
             padding: const EdgeInsets.all(16),
-            child: selectedAccount != null 
-                ? _buildAccountDetails() 
+            child: selectedAccount != null
+                ? _buildAccountDetails()
                 : _buildEmptyState(),
           ),
         ),
@@ -377,7 +304,7 @@ class _AccountStructurePageState extends State<AccountStructurePage> {
                 ),
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: isSelected 
+                    color: isSelected
                         ? Colors.purple.shade300
                         : Colors.grey.shade300,
                   ),
@@ -389,7 +316,7 @@ class _AccountStructurePageState extends State<AccountStructurePage> {
                       GestureDetector(
                         onTap: () => _toggleExpand(account.id),
                         child: Icon(
-                          isExpanded 
+                          isExpanded
                               ? Icons.keyboard_arrow_down
                               : Icons.keyboard_arrow_left,
                           size: 16,
@@ -398,9 +325,9 @@ class _AccountStructurePageState extends State<AccountStructurePage> {
                       )
                     else
                       const SizedBox(width: 16),
-                    
+
                     const SizedBox(width: 8),
-                    
+
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
@@ -416,9 +343,9 @@ class _AccountStructurePageState extends State<AccountStructurePage> {
                         ),
                       ),
                     ),
-                    
+
                     const SizedBox(width: 12),
-                    
+
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -434,7 +361,7 @@ class _AccountStructurePageState extends State<AccountStructurePage> {
                         ],
                       ),
                     ),
-                    
+
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
@@ -468,7 +395,7 @@ class _AccountStructurePageState extends State<AccountStructurePage> {
               ),
             ),
           ),
-          
+
           if (hasChildren && isExpanded)
             Column(
               children: account.children.map((child) => _buildAccountItem(child, level + 1)).toList(),
@@ -481,6 +408,11 @@ class _AccountStructurePageState extends State<AccountStructurePage> {
   Widget _buildAccountDetails() {
     final accountData = _findAccount(selectedAccount!);
     if (accountData == null) return _buildEmptyState();
+
+    final hesab = _hesabById[selectedAccount!];
+    final parentHesab = hesab != null && hesab.parentId != null
+        ? _hesabById[hesab.parentId!]
+        : null;
 
     return SingleChildScrollView(
       child: Column(
@@ -501,7 +433,7 @@ class _AccountStructurePageState extends State<AccountStructurePage> {
                         ),
                       ),
                       TextButton(
-                        onPressed: () {},
+                        onPressed: () => _showEntityDialog(hesab: hesab),
                         style: TextButton.styleFrom(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           minimumSize: Size.zero,
@@ -515,12 +447,43 @@ class _AccountStructurePageState extends State<AccountStructurePage> {
                           ],
                         ),
                       ),
+                      TextButton(
+                        onPressed: () => _showEntityDialog(parentId: selectedAccount!),
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          minimumSize: Size.zero,
+                        ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.add, size: 12),
+                            SizedBox(width: 4),
+                            Text('زیرحساب', style: TextStyle(fontSize: 10)),
+                          ],
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () => _deleteAccount(selectedAccount!),
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          minimumSize: Size.zero,
+                        ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.delete_outline, size: 12, color: Colors.red),
+                            SizedBox(width: 4),
+                            Text('حذف', style: TextStyle(fontSize: 10, color: Colors.red)),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 12),
                   _buildDetailRow('کد حساب', accountData.code),
                   _buildDetailRow('نام حساب', accountData.name),
                   _buildDetailRow('نام انگلیسی', accountData.nameEn),
+                  _buildDetailRow('سرفصل اصلی', parentHesab?.name ?? '—'),
                   Row(
                     children: [
                       const Text(
@@ -569,9 +532,9 @@ class _AccountStructurePageState extends State<AccountStructurePage> {
               ),
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Balance Chart
           Card(
             child: Padding(
@@ -609,9 +572,9 @@ class _AccountStructurePageState extends State<AccountStructurePage> {
               ),
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Recent Transactions
           Card(
             child: Padding(
@@ -737,51 +700,137 @@ class _AccountStructurePageState extends State<AccountStructurePage> {
       ),
     );
   }
-  void _showEntityDialog({Hesab? hesab}) {
-    FormMode formMode = hesab != null ? FormMode.edit : FormMode.create;
+
+  void _showEntityDialog({Hesab? hesab, String? parentId}) {
+    final formMode = hesab != null ? FormMode.edit : FormMode.create;
 
     // ذخیره context اصلی برای استفاده بعدی
     final mainContext = context;
+    final accounts = _hesabById.values.toList();
 
     showDialog(
       context: context,
       builder: (dialogContext) => ChangeNotifierProvider<HesabFormController>(
-        create: (_) => HesabFormController(hesab: hesab),
+        create: (_) {
+          final controller = HesabFormController(hesab: hesab);
+          // هنگام افزودن زیرحساب، والد از قبل مشخص است
+          if (parentId != null) {
+            controller.parentId.set(parentId);
+          }
+          return controller;
+        },
         child: AlertDialog(
-          title: Text(formMode==FormMode.create ? 'افزودن سرفصل حساب' : 'ویرایش سرفصل حساب'),
+          title: Text(formMode == FormMode.create ? 'افزودن سرفصل حساب' : 'ویرایش سرفصل حساب'),
           content: SingleChildScrollView(
             child: Consumer<HesabFormController>(
               builder: (context, form, _) => Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  TextField(
-                    decoration: InputDecoration(labelText: 'سطح',errorText: form.levelF.error),
-                    onChanged: (v) => form.levelF.set(int.tryParse(v)?? 0),
-
-                    controller: TextEditingController(text: form.levelF.value.toString()),
+                  DropdownButtonFormField<int>(
+                    value: form.level.value,
+                    items: AccountLevel.values
+                        .map((level) => DropdownMenuItem(
+                              value: level.index,
+                              child: Text('سطح ${level.index}'),
+                            ))
+                        .toList(),
+                    onChanged: (value) => form.level.set(value ?? 0),
+                    decoration: const InputDecoration(
+                      labelText: 'سطح',
+                      isDense: true,
+                    ),
                   ),
+                  const SizedBox(height: 8),
+                  DropdownButtonFormField<String>(
+                    value: form.parentId.value.isEmpty ||
+                            !accounts.any((account) =>
+                                account.id == form.parentId.value)
+                        ? null
+                        : form.parentId.value,
+                    items: [
+                      DropdownMenuItem(
+                        value: '',
+                        child: const Text('سرفصل اصلی'),
+                      ),
+                      ...accounts.map(
+                        (account) => DropdownMenuItem(
+                          value: account.id,
+                          child: Text(
+                            '${account.code} - ${account.name}',
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ),
+                    ],
+                    onChanged: (value) => form.parentId.set(value ?? ''),
+                    decoration: const InputDecoration(
+                      labelText: 'سرفصل اصلی',
+                      isDense: true,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
                   TextField(
-                    decoration: InputDecoration(labelText: 'کد ',errorText: form.code.error),
-                    onChanged: (v) => form.code.set(v),
+                    decoration: InputDecoration(
+                      labelText: 'کد',
+                      errorText: form.code.error,
+                      isDense: true,
+                    ),
+                    onChanged: (value) => form.code.set(value),
                     controller: TextEditingController(text: form.code.value),
-
                   ),
-                  TextField(
-                    decoration: InputDecoration(labelText: 'نام',errorText: form.descF.error),
-                    onChanged: (v) => form.descF.set(v),
-                    controller: TextEditingController(text: form.descF.value),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        'کدگذاری: ۱xxx دارایی، ۲xxx بدهی، ۳xxx حقوق، ۴xxx درآمد، ۵xxx هزینه، ۶xxx امانی',
+                        style: TextStyle(fontSize: 9, color: Colors.grey),
+                        textAlign: TextAlign.right,
+                      ),
+                    ),
                   ),
-                  // TextField(
-                  //   decoration: InputDecoration(labelText: 'نوع - (سرفصل اصلی)',errorText: form.parent.error),
-                  //   onChanged: (v) => form.fee.set(double.tryParse(v) ?? 0),
-                  //   keyboardType: TextInputType.number,
-                  //   controller: TextEditingController(text: form.fee.value.toString()),
-                  // ),
+                  const SizedBox(height: 8),
                   TextField(
-                    decoration: InputDecoration(labelText: 'توضیحات',errorText: form.exteraDesc.error),
-                    onChanged: (v) => form.exteraDesc.set(v),
+                    decoration: InputDecoration(
+                      labelText: 'نام',
+                      errorText: form.name.error,
+                      isDense: true,
+                    ),
+                    onChanged: (value) => form.name.set(value),
+                    controller: TextEditingController(text: form.name.value),
+                  ),
+                  const SizedBox(height: 8),
+                  TextField(
+                    decoration: InputDecoration(
+                      labelText: 'موجودی',
+                      errorText: form.balance.error,
+                      isDense: true,
+                    ),
+                    onChanged: (value) => form.balance.set(double.tryParse(value) ?? 0),
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    controller: TextEditingController(text: form.balance.value.toString()),
+                  ),
+                  const SizedBox(height: 8),
+                  TextField(
+                    decoration: InputDecoration(
+                      labelText: 'قیمت ارز',
+                      errorText: form.fuPrice.error,
+                      isDense: true,
+                    ),
+                    onChanged: (value) => form.fuPrice.set(double.tryParse(value) ?? 0),
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    controller: TextEditingController(text: form.fuPrice.value.toString()),
+                  ),
+                  const SizedBox(height: 8),
+                  TextField(
+                    decoration: InputDecoration(
+                      labelText: 'نام انگلیسی',
+                      errorText: form.nameEn.error,
+                      isDense: true,
+                    ),
+                    onChanged: (value) => form.nameEn.set(value),
                     keyboardType: TextInputType.text,
-                    controller: TextEditingController(text: form.exteraDesc.value),
+                    controller: TextEditingController(text: form.nameEn.value),
                   ),
                 ],
               ),
@@ -796,16 +845,16 @@ class _AccountStructurePageState extends State<AccountStructurePage> {
               builder: (context, form, _) => TextButton(
                 onPressed: () async {
                   try {
-                    final hesab = form.buildHesab( now: DateTime.now());
-                    await dialogContext.read<HesabService>().saveHesab(hesab, formMode, now: DateTime.now());
-                    // print("saved product:\n$product");
+                    final hesab = form.buildHesab(now: DateTime.now());
+                    await dialogContext
+                        .read<HesabService>()
+                        .saveHesab(hesab, formMode, now: DateTime.now());
+                    if (!dialogContext.mounted) return;
                     // بستن دیالوگ
                     Navigator.pop(dialogContext);
 
-                    // refresh Accounting Struct
-                    // _loadHesab();
-
                     // نمایش پیام موفقیت
+                    if (!mainContext.mounted) return;
                     ScaffoldMessenger.of(mainContext).showSnackBar(
                       const SnackBar(
                         content: Text('عملیات با موفقیت انجام شد'),
@@ -813,12 +862,13 @@ class _AccountStructurePageState extends State<AccountStructurePage> {
                       ),
                     );
                   } on Exception catch (e) {
+                    if (!mainContext.mounted) return;
                     ScaffoldMessenger.of(mainContext).showSnackBar(
                       SnackBar(content: Text('خطا: ${e.toString()}')),
                     );
                   }
                 },
-                child: Text(formMode==FormMode.create ? 'افزودن' : 'ویرایش'),
+                child: Text(formMode == FormMode.create ? 'افزودن' : 'ویرایش'),
               ),
             ),
           ],
@@ -827,6 +877,56 @@ class _AccountStructurePageState extends State<AccountStructurePage> {
     );
   }
 
+  void _deleteAccount(String id) {
+    final hesab = _hesabById[id];
+    if (hesab == null) return;
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('حذف حساب'),
+        content: Text('آیا از حذف حساب «${hesab.name}» مطمئن هستید؟'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('لغو'),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(dialogContext);
+              try {
+                await context
+                    .read<HesabService>()
+                    .deleteHesab(hesab, now: DateTime.now());
+                if (mounted) {
+                  setState(() {
+                    if (selectedAccount == id) {
+                      selectedAccount = null;
+                    }
+                  });
+                }
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('حساب با موفقیت حذف شد'),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                }
+              } on Exception catch (e) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('خطا: ${e.toString()}')),
+                  );
+                }
+              }
+            },
+            child: const Text('حذف', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+  }
 
   void _toggleExpand(String accountId) {
     setState(() {
@@ -847,7 +947,21 @@ class _AccountStructurePageState extends State<AccountStructurePage> {
       }
       return null;
     }
-    return findInList(accounts);
+    return findInList(_accounts);
+  }
+
+  /// طرف حساب بر اساس کد حساب (عدد اول کد)
+  AccountType _accountTypeOf(String code) {
+    final first = code.trim().isEmpty ? '' : code.trim().substring(0, 1);
+    return switch (first) {
+      '1' => AccountType.asset,
+      '2' => AccountType.liability,
+      '3' => AccountType.equity,
+      '4' => AccountType.income,
+      '5' => AccountType.expense,
+      '6' => AccountType.regulatory,
+      _ => AccountType.other,
+    };
   }
 
   String _formatBalance(int balance) {
@@ -863,10 +977,16 @@ class _AccountStructurePageState extends State<AccountStructurePage> {
         return 'دارایی';
       case AccountType.liability:
         return 'بدهی';
+      case AccountType.equity:
+        return 'حقوق';
       case AccountType.income:
         return 'درآمد';
       case AccountType.expense:
         return 'هزینه';
+      case AccountType.regulatory:
+        return 'امانی';
+      case AccountType.other:
+        return 'سایر';
     }
   }
 
@@ -876,10 +996,16 @@ class _AccountStructurePageState extends State<AccountStructurePage> {
         return Colors.green.shade100;
       case AccountType.liability:
         return Colors.red.shade100;
+      case AccountType.equity:
+        return Colors.teal.shade100;
       case AccountType.income:
         return Colors.blue.shade100;
       case AccountType.expense:
         return Colors.orange.shade100;
+      case AccountType.regulatory:
+        return Colors.purple.shade100;
+      case AccountType.other:
+        return Colors.grey.shade100;
     }
   }
 
@@ -889,10 +1015,16 @@ class _AccountStructurePageState extends State<AccountStructurePage> {
         return Colors.green.shade800;
       case AccountType.liability:
         return Colors.red.shade800;
+      case AccountType.equity:
+        return Colors.teal.shade800;
       case AccountType.income:
         return Colors.blue.shade800;
       case AccountType.expense:
         return Colors.orange.shade800;
+      case AccountType.regulatory:
+        return Colors.purple.shade800;
+      case AccountType.other:
+        return Colors.grey.shade800;
     }
   }
 }
@@ -900,8 +1032,11 @@ class _AccountStructurePageState extends State<AccountStructurePage> {
 enum AccountType {
   asset,
   liability,
+  equity,
   income,
   expense,
+  regulatory,
+  other,
 }
 
 class AccountData {

@@ -21,25 +21,25 @@ mixin _$Hesab {
   String get id => throw _privateConstructorUsedError;
 
   /// سطح سرفصل (۰ تا ۴)
-  AccountLevel get levelF => throw _privateConstructorUsedError;
+  AccountLevel get level => throw _privateConstructorUsedError;
 
-  ///سرفصل اصلی
-  Hesab? get parent => throw _privateConstructorUsedError;
+  /// شناسه سرفصل اصلی - null یعنی سرفصل ریشه
+  String? get parentId => throw _privateConstructorUsedError;
 
   /// کد سرفصل
   String get code => throw _privateConstructorUsedError;
 
-  /// توضیحات سرفصل
-  String get descF => throw _privateConstructorUsedError;
+  /// نام سرفصل
+  String get name => throw _privateConstructorUsedError;
 
-  /// قیمت به ارز بومی
-  double? get crnPrice => throw _privateConstructorUsedError;
+  /// موجودی حساب به ارز بومی
+  double? get balance => throw _privateConstructorUsedError;
 
   /// قیمت به ارز خارجی
   double? get fuPrice => throw _privateConstructorUsedError;
 
-  /// توضیحات اضافی
-  String get exteraDesc => throw _privateConstructorUsedError;
+  /// نام انگلیسی سرفصل
+  String get nameEn => throw _privateConstructorUsedError;
 
   /// زمان ایجاد (میلی‌ثانیه)
   int get createdAt => throw _privateConstructorUsedError;
@@ -69,21 +69,19 @@ abstract class $HesabCopyWith<$Res> {
   @useResult
   $Res call({
     String id,
-    AccountLevel levelF,
-    Hesab? parent,
+    AccountLevel level,
+    String? parentId,
     String code,
-    String descF,
-    double? crnPrice,
+    String name,
+    double? balance,
     double? fuPrice,
-    String exteraDesc,
+    String nameEn,
     int createdAt,
     int updatedAt,
     int version,
     bool isDeleted,
     int? deletedAt,
   });
-
-  $HesabCopyWith<$Res>? get parent;
 }
 
 /// @nodoc
@@ -100,54 +98,55 @@ class _$HesabCopyWithImpl<$Res, $Val extends Hesab>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? id = null,
-    Object? levelF = null,
-    Object? parent = freezed,
-    Object? code = null,
-    Object? descF = null,
-    Object? crnPrice = freezed,
-    Object? fuPrice = freezed,
-    Object? exteraDesc = null,
-    Object? createdAt = null,
-    Object? updatedAt = null,
-    Object? version = null,
-    Object? isDeleted = null,
-    Object? deletedAt = freezed,
-  }) {
+  $Res call(
+      {
+        Object? id = null,
+        Object? level = null,
+        Object? parentId = freezed,
+        Object? code = null,
+        Object? name = null,
+        Object? balance = freezed,
+        Object? fuPrice = freezed,
+        Object? nameEn = null,
+        Object? createdAt = null,
+        Object? updatedAt = null,
+        Object? version = null,
+        Object? isDeleted = null,
+        Object? deletedAt = freezed,
+      }) {
     return _then(
       _value.copyWith(
             id: null == id
                 ? _value.id
                 : id // ignore: cast_nullable_to_non_nullable
                       as String,
-            levelF: null == levelF
-                ? _value.levelF
-                : levelF // ignore: cast_nullable_to_non_nullable
+            level: null == level
+                ? _value.level
+                : level // ignore: cast_nullable_to_non_nullable
                       as AccountLevel,
-            parent: freezed == parent
-                ? _value.parent
-                : parent // ignore: cast_nullable_to_non_nullable
-                      as Hesab?,
+            parentId: freezed == parentId
+                ? _value.parentId
+                : parentId // ignore: cast_nullable_to_non_nullable
+                      as String?,
             code: null == code
                 ? _value.code
                 : code // ignore: cast_nullable_to_non_nullable
                       as String,
-            descF: null == descF
-                ? _value.descF
-                : descF // ignore: cast_nullable_to_non_nullable
+            name: null == name
+                ? _value.name
+                : name // ignore: cast_nullable_to_non_nullable
                       as String,
-            crnPrice: freezed == crnPrice
-                ? _value.crnPrice
-                : crnPrice // ignore: cast_nullable_to_non_nullable
+            balance: freezed == balance
+                ? _value.balance
+                : balance // ignore: cast_nullable_to_non_nullable
                       as double?,
             fuPrice: freezed == fuPrice
                 ? _value.fuPrice
                 : fuPrice // ignore: cast_nullable_to_non_nullable
                       as double?,
-            exteraDesc: null == exteraDesc
-                ? _value.exteraDesc
-                : exteraDesc // ignore: cast_nullable_to_non_nullable
+            nameEn: null == nameEn
+                ? _value.nameEn
+                : nameEn // ignore: cast_nullable_to_non_nullable
                       as String,
             createdAt: null == createdAt
                 ? _value.createdAt
@@ -173,20 +172,6 @@ class _$HesabCopyWithImpl<$Res, $Val extends Hesab>
           as $Val,
     );
   }
-
-  /// Create a copy of Hesab
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $HesabCopyWith<$Res>? get parent {
-    if (_value.parent == null) {
-      return null;
-    }
-
-    return $HesabCopyWith<$Res>(_value.parent!, (value) {
-      return _then(_value.copyWith(parent: value) as $Val);
-    });
-  }
 }
 
 /// @nodoc
@@ -199,22 +184,19 @@ abstract class _$$HesabImplCopyWith<$Res> implements $HesabCopyWith<$Res> {
   @useResult
   $Res call({
     String id,
-    AccountLevel levelF,
-    Hesab? parent,
+    AccountLevel level,
+    String? parentId,
     String code,
-    String descF,
-    double? crnPrice,
+    String name,
+    double? balance,
     double? fuPrice,
-    String exteraDesc,
+    String nameEn,
     int createdAt,
     int updatedAt,
     int version,
     bool isDeleted,
     int? deletedAt,
   });
-
-  @override
-  $HesabCopyWith<$Res>? get parent;
 }
 
 /// @nodoc
@@ -230,54 +212,55 @@ class __$$HesabImplCopyWithImpl<$Res>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? id = null,
-    Object? levelF = null,
-    Object? parent = freezed,
-    Object? code = null,
-    Object? descF = null,
-    Object? crnPrice = freezed,
-    Object? fuPrice = freezed,
-    Object? exteraDesc = null,
-    Object? createdAt = null,
-    Object? updatedAt = null,
-    Object? version = null,
-    Object? isDeleted = null,
-    Object? deletedAt = freezed,
-  }) {
+  $Res call(
+      {
+        Object? id = null,
+        Object? level = null,
+        Object? parentId = freezed,
+        Object? code = null,
+        Object? name = null,
+        Object? balance = freezed,
+        Object? fuPrice = freezed,
+        Object? nameEn = null,
+        Object? createdAt = null,
+        Object? updatedAt = null,
+        Object? version = null,
+        Object? isDeleted = null,
+        Object? deletedAt = freezed,
+      }) {
     return _then(
       _$HesabImpl(
         id: null == id
             ? _value.id
             : id // ignore: cast_nullable_to_non_nullable
                   as String,
-        levelF: null == levelF
-            ? _value.levelF
-            : levelF // ignore: cast_nullable_to_non_nullable
+        level: null == level
+            ? _value.level
+            : level // ignore: cast_nullable_to_non_nullable
                   as AccountLevel,
-        parent: freezed == parent
-            ? _value.parent
-            : parent // ignore: cast_nullable_to_non_nullable
-                  as Hesab?,
+        parentId: freezed == parentId
+            ? _value.parentId
+            : parentId // ignore: cast_nullable_to_non_nullable
+                  as String?,
         code: null == code
             ? _value.code
             : code // ignore: cast_nullable_to_non_nullable
                   as String,
-        descF: null == descF
-            ? _value.descF
-            : descF // ignore: cast_nullable_to_non_nullable
+        name: null == name
+            ? _value.name
+            : name // ignore: cast_nullable_to_non_nullable
                   as String,
-        crnPrice: freezed == crnPrice
-            ? _value.crnPrice
-            : crnPrice // ignore: cast_nullable_to_non_nullable
+        balance: freezed == balance
+            ? _value.balance
+            : balance // ignore: cast_nullable_to_non_nullable
                   as double?,
         fuPrice: freezed == fuPrice
             ? _value.fuPrice
             : fuPrice // ignore: cast_nullable_to_non_nullable
                   as double?,
-        exteraDesc: null == exteraDesc
-            ? _value.exteraDesc
-            : exteraDesc // ignore: cast_nullable_to_non_nullable
+        nameEn: null == nameEn
+            ? _value.nameEn
+            : nameEn // ignore: cast_nullable_to_non_nullable
                   as String,
         createdAt: null == createdAt
             ? _value.createdAt
@@ -309,13 +292,13 @@ class __$$HesabImplCopyWithImpl<$Res>
 class _$HesabImpl extends _Hesab {
   const _$HesabImpl({
     required this.id,
-    required this.levelF,
-    this.parent,
+    required this.level,
+    this.parentId,
     required this.code,
-    required this.descF,
-    this.crnPrice,
+    required this.name,
+    this.balance,
     this.fuPrice,
-    this.exteraDesc = '',
+    this.nameEn = '',
     required this.createdAt,
     required this.updatedAt,
     required this.version,
@@ -329,32 +312,32 @@ class _$HesabImpl extends _Hesab {
 
   /// سطح سرفصل (۰ تا ۴)
   @override
-  final AccountLevel levelF;
+  final AccountLevel level;
 
-  ///سرفصل اصلی
+  /// شناسه سرفصل اصلی - null یعنی سرفصل ریشه
   @override
-  final Hesab? parent;
+  final String? parentId;
 
   /// کد سرفصل
   @override
   final String code;
 
-  /// توضیحات سرفصل
+  /// نام سرفصل
   @override
-  final String descF;
+  final String name;
 
-  /// قیمت به ارز بومی
+  /// موجودی حساب به ارز بومی
   @override
-  final double? crnPrice;
+  final double? balance;
 
   /// قیمت به ارز خارجی
   @override
   final double? fuPrice;
 
-  /// توضیحات اضافی
+  /// نام انگلیسی سرفصل
   @override
   @JsonKey()
-  final String exteraDesc;
+  final String nameEn;
 
   /// زمان ایجاد (میلی‌ثانیه)
   @override
@@ -378,7 +361,7 @@ class _$HesabImpl extends _Hesab {
 
   @override
   String toString() {
-    return 'Hesab(id: $id, levelF: $levelF, parent: $parent, code: $code, descF: $descF, crnPrice: $crnPrice, fuPrice: $fuPrice, exteraDesc: $exteraDesc, createdAt: $createdAt, updatedAt: $updatedAt, version: $version, isDeleted: $isDeleted, deletedAt: $deletedAt)';
+    return 'Hesab(id: $id, level: $level, parentId: $parentId, code: $code, name: $name, balance: $balance, fuPrice: $fuPrice, nameEn: $nameEn, createdAt: $createdAt, updatedAt: $updatedAt, version: $version, isDeleted: $isDeleted, deletedAt: $deletedAt)';
   }
 
   @override
@@ -387,15 +370,14 @@ class _$HesabImpl extends _Hesab {
         (other.runtimeType == runtimeType &&
             other is _$HesabImpl &&
             (identical(other.id, id) || other.id == id) &&
-            (identical(other.levelF, levelF) || other.levelF == levelF) &&
-            (identical(other.parent, parent) || other.parent == parent) &&
+            (identical(other.level, level) || other.level == level) &&
+            (identical(other.parentId, parentId) ||
+                other.parentId == parentId) &&
             (identical(other.code, code) || other.code == code) &&
-            (identical(other.descF, descF) || other.descF == descF) &&
-            (identical(other.crnPrice, crnPrice) ||
-                other.crnPrice == crnPrice) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.balance, balance) || other.balance == balance) &&
             (identical(other.fuPrice, fuPrice) || other.fuPrice == fuPrice) &&
-            (identical(other.exteraDesc, exteraDesc) ||
-                other.exteraDesc == exteraDesc) &&
+            (identical(other.nameEn, nameEn) || other.nameEn == nameEn) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             (identical(other.updatedAt, updatedAt) ||
@@ -411,13 +393,13 @@ class _$HesabImpl extends _Hesab {
   int get hashCode => Object.hash(
     runtimeType,
     id,
-    levelF,
-    parent,
+    level,
+    parentId,
     code,
-    descF,
-    crnPrice,
+    name,
+    balance,
     fuPrice,
-    exteraDesc,
+    nameEn,
     createdAt,
     updatedAt,
     version,
@@ -437,13 +419,13 @@ class _$HesabImpl extends _Hesab {
 abstract class _Hesab extends Hesab {
   const factory _Hesab({
     required final String id,
-    required final AccountLevel levelF,
-    final Hesab? parent,
+    required final AccountLevel level,
+    final String? parentId,
     required final String code,
-    required final String descF,
-    final double? crnPrice,
+    required final String name,
+    final double? balance,
     final double? fuPrice,
-    final String exteraDesc,
+    final String nameEn,
     required final int createdAt,
     required final int updatedAt,
     required final int version,
@@ -458,31 +440,31 @@ abstract class _Hesab extends Hesab {
 
   /// سطح سرفصل (۰ تا ۴)
   @override
-  AccountLevel get levelF;
+  AccountLevel get level;
 
-  ///سرفصل اصلی
+  /// شناسه سرفصل اصلی - null یعنی سرفصل ریشه
   @override
-  Hesab? get parent;
+  String? get parentId;
 
   /// کد سرفصل
   @override
   String get code;
 
-  /// توضیحات سرفصل
+  /// نام سرفصل
   @override
-  String get descF;
+  String get name;
 
-  /// قیمت به ارز بومی
+  /// موجودی حساب به ارز بومی
   @override
-  double? get crnPrice;
+  double? get balance;
 
   /// قیمت به ارز خارجی
   @override
   double? get fuPrice;
 
-  /// توضیحات اضافی
+  /// نام انگلیسی سرفصل
   @override
-  String get exteraDesc;
+  String get nameEn;
 
   /// زمان ایجاد (میلی‌ثانیه)
   @override

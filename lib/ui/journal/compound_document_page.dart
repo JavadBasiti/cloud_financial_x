@@ -104,7 +104,7 @@ class _CompoundDocumentPageState extends State<CompoundDocumentPage> {
 
   String _hesabCode(String id) => _hesabById(id)?.code ?? '----';
 
-  String _hesabTitle(String id) => _hesabById(id)?.descF ?? 'سرفصل نامشخص';
+  String _hesabTitle(String id) => _hesabById(id)?.name ?? 'سرفصل نامشخص';
 
   void _showMessage(String message, {Color? color}) {
     ScaffoldMessenger.of(context).showSnackBar(
